@@ -4,3 +4,19 @@
 
 expo-env.d.ts
 # @end expo-cli
+
+# Node / Expo / React Native
+node_modules/
+.expo/
+.expo-shared/
+android/
+ios/
+dist/
+build/
+
+# NPM / Yarn
+.npmrc
+yarn-error.log
+
+# Lock duplicado fora do projeto
+../package-lock.json
