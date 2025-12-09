@@ -8,9 +8,10 @@ import { Input, InputField, InputIcon, InputSlot } from "@/components/ui/input";
 import { Select, SelectBackdrop, SelectContent, SelectDragIndicator, SelectDragIndicatorWrapper, SelectIcon, SelectInput, SelectItem, SelectPortal, SelectTrigger } from "@/components/ui/select";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
+import IMotorista from "@/src/Entities/IMotorista";
+import Veiculo from "@/src/Entities/IVeiculo";
+import { TipoVeiculo } from "@/src/enum/TipoVeiculo";
 import { router } from "expo-router";
-
-
 import { ChevronDownIcon, EyeIcon, EyeOffIcon } from "lucide-react-native";
 import { useState } from "react";
 import { Image } from "react-native";
@@ -22,8 +23,27 @@ export default function Register() {
     const [password, setPassword] = useState('');
     const [telephone, setTelephone] = useState('');
     const [placa, setPlaca] = useState('');
-    const [tipoVeiculo, setTipoVeiculo] = useState('');
+    const [tipoVeiculoSelected, setTipoVeiculoSelected] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    
+    const motorista : IMotorista = {
+        nome: '',
+        telefone: '',
+    }
+
+    const veiculo: Veiculo = {
+        motorista: motorista,
+        nome: '',
+        placa: '',
+        tipoVeiculo: TipoVeiculo.Indefinido
+    }
+    
+    const tiposVeiculoOptions = Object.entries(TipoVeiculo)
+        .filter(([key, value]) => isNaN(Number(key)))
+        .map(([key, value]) => ({
+            label: key,
+            value: value.toString(),
+        }));
 
     const handleRoute = () => {
         router.back();
@@ -32,6 +52,22 @@ export default function Register() {
     const handleState = () => {
         setShowPassword((showState) => !showState);
     };
+
+    const handleRegister = () => {
+        let veiculoCriado: Veiculo = {
+            motorista: motorista,
+            nome: veiculo.nome,
+            placa: motorista.veiculo?.placa,
+            tipoVeiculo: veiculo.tipoVeiculo,
+        }
+
+        let motoristaCriado : IMotorista = {
+            nome: name,
+            telefone: telephone,
+            veiculo: motorista.veiculo, 
+        }
+    
+    }
 
     return (
         <Box className="flex-1 bg-white px-4">
@@ -134,7 +170,7 @@ export default function Register() {
 
                         <VStack space="xs">
                             <Text size="sm" className="font-medium text-gray-900">Tipo De Veículo</Text>
-                            <Select>
+                            <Select onValueChange={setTipoVeiculoSelected}>
                                 <SelectTrigger variant="outline" size="md">
                                     <SelectInput placeholder="Select option" />
                                     <SelectIcon className="mr-3" as={ChevronDownIcon} />
@@ -145,14 +181,15 @@ export default function Register() {
                                         <SelectDragIndicatorWrapper>
                                             <SelectDragIndicator />
                                         </SelectDragIndicatorWrapper>
-                                        <SelectItem label="UX Research" value="ux" />
-                                        <SelectItem label="Web Development" value="web" />
-                                        <SelectItem
-                                            label="Cross Platform Development Process"
-                                            value="Cross Platform Development Process"
-                                        />
-                                        <SelectItem label="UI Designing" value="ui" isDisabled={true} />
-                                        <SelectItem label="Backend Development" value="backend" />
+
+                                        {tiposVeiculoOptions.map((item) =>
+                                            <SelectItem
+                                                key={item.value}
+                                                label={item.label}
+                                                value={item.value}
+                                            />
+                                        )}
+
                                     </SelectContent>
                                 </SelectPortal>
                             </Select>
@@ -162,12 +199,20 @@ export default function Register() {
                             <Button
                                 className="flex-1 bg-gray-300 rounded-lg"
                                 onPress={handleRoute}
-                                >
+                            >
                                 <ButtonText className="font-bold text-black">VOLTAR</ButtonText>
                             </Button>
 
-                            <Button className="flex-1 bg-blue-600 rounded-lg">
-                                <ButtonText className="font-bold">CADASTRAR</ButtonText>
+                            <Button 
+                                className="flex-1 bg-blue-600 rounded-lg"
+                                onPress={handleRegister}
+                                >
+                                <ButtonText
+                                    className="font-bold"
+                                >
+                                    CADASTRAR
+                                </ButtonText>
+
                             </Button>
                         </HStack>
                     </VStack>

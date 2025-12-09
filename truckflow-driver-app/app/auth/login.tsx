@@ -89,7 +89,7 @@ export default function Login() {
             <Button
               size="lg"
               className="w-full bg-blue-600 rounded-lg mt-2 active:bg-blue-700"
-              onPress={() => console.log("Login:", email)}
+              onPress={() => router.push('/(app)/home')}
             >
               <ButtonText className="font-bold">ENTRAR</ButtonText>
             </Button>
