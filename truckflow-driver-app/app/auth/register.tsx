@@ -10,7 +10,7 @@ import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import IMotorista from "@/src/Entities/IMotorista";
 import Veiculo from "@/src/Entities/IVeiculo";
-import { TipoVeiculo } from "@/src/enum/TipoVeiculo";
+import { TipoVeiculo } from "@/src/enums/TipoVeiculo";
 import { router } from "expo-router";
 import { ChevronDownIcon, EyeIcon, EyeOffIcon } from "lucide-react-native";
 import { useState } from "react";

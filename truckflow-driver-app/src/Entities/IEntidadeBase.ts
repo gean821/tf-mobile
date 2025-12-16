@@ -1,5 +1,5 @@
 export default interface EntidadeBase {
-    id?: string;
+    id: string;
     createdAt?:  string;
     updatedAt?: Date;
     deletedAt?: Date;

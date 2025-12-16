@@ -9,12 +9,12 @@ export default class ProdutoService {
     }
 
     static async GetById(id: string): Promise<IProduto> {
-        const local = await http.get(`/Produto/${id}`);
+        const local = await http.get<IProduto>(`/Produto/${id}`);
         return local.data;
     }
 
     static async AddProduto(Produto: IProduto): Promise<IProduto> {
-        const produto = await http.post('/Produto', Produto);
+        const produto = await http.post<IProduto>('/Produto', Produto);
         return produto.data;
     }
 

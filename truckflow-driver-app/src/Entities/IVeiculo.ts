@@ -1,4 +1,4 @@
-import { TipoVeiculo } from "../enum/TipoVeiculo";
+import { TipoVeiculo } from "../enums/TipoVeiculo";
 import type EntidadeBase from "./IEntidadeBase";
 import IMotorista from "./IMotorista";
 
