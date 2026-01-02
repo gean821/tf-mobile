@@ -5,6 +5,7 @@ export default interface INotaFiscalParsedDto {
     chaveAcesso: string;
     numero: number;
     fornecedor: string;
+    fornecedorId?: string;
     serie: string;
     dataEmissao: string;
     emitenteNome: string;

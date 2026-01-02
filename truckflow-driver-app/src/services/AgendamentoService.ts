@@ -1,28 +1,31 @@
-import IAgendamento from '../Entities/IAgendamento';
+import IAgendamentoResponseDto from '../Dtos/Agendamento/IAgendamentoResponseDto';
+import IReservarAgendamentoDto from '../Dtos/Agendamento/IReservarAgendamentoDto';
 import http from './http/axios';
 
 export default class AgendamentoService {
-  static async GetAll(): Promise<IAgendamento[]> {
-    const { data } = await http.get('/Agendamento');
+
+  static async GetAvailableAppointments
+    (
+      fornecedorId: string,
+      data: string
+    ): Promise<IAgendamentoResponseDto[]> {
+    const { data: vagas } = await http.get('/AgendamentoMotorista/disponiveis', {
+      params: {
+        fornecedorId,
+        data
+      }
+    });
+
+    return vagas;
+  }
+
+  static async BookApointment(dto: IReservarAgendamentoDto): Promise<IAgendamentoResponseDto> {
+    const {data}  = await http.post('AgendamentoMotorista/reservar', dto);
     return data;
   }
 
-  static async GetById(id: string): Promise<IAgendamento> {
-    const { data } = await http.get(`/Agendamento/${id}`);
+  static async getDriverAppointments(motoristaId: string): Promise<IAgendamentoResponseDto[]> {
+    const { data } = await http.get(`AgendamentoMotorista/meus-agendamentos/${motoristaId}`);
     return data;
-  }
-
-  static async AddAgendamento(Agendamento: IAgendamento): Promise<IAgendamento> {
-    const { data } = await http.post('/Agendamento', Agendamento);
-    return data;
-  }
-
-  static async UpdateAgendamento(id: string, AgendamentoAtualizado: IAgendamento): Promise<IAgendamento> {
-    const { data } = await http.put(`/Agendamento/${id}`, AgendamentoAtualizado);
-    return data;
-  }
-
-  static async DeleteAgendamento(id: string): Promise<void> {
-    await http.delete(`/Agendamento/${id}`);
   }
 }

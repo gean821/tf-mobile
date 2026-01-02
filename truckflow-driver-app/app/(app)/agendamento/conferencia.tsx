@@ -40,6 +40,7 @@ export default function ConferenciaNota() {
 
     const handleSelectProduct = (id: string, nome: string) => {
         if (selectedIndex !== null) {
+            
             // Atualiza a Store (Amarelo -> Verde instantaneamente)
             vincularProduto(selectedIndex, id, nome);
         }
@@ -47,9 +48,8 @@ export default function ConferenciaNota() {
         setSelectedIndex(null);
     };
 
-    // --- LÓGICA DE SALVAR ---
-    const handleConfirmarTudo = async () => {
-        // Validação
+    
+    const handleConfirmarTudo = async () => {    
         const itensPendentes = nota.itens.filter(i => !i.produtoSistemaId);
 
         if (itensPendentes.length > 0) {
@@ -60,8 +60,9 @@ export default function ConferenciaNota() {
             return;
         }
 
-        // Chama o Hook para enviar ao Backend
         await salvarNota(nota);
+        console.log("Dados da Nota:", nota);
+        router.push('/(app)/agendamento/horarios');
     };
 
     return (
@@ -134,7 +135,7 @@ export default function ConferenciaNota() {
                     {isSaving ? (
                         <ButtonSpinner color="#fff" />
                     ) : (
-                        <ButtonText className="font-bold">Confirmar Agendamento</ButtonText>
+                        <ButtonText className="font-bold">Confirmar Itens</ButtonText>
                     )}
                 </Button>
             </View>

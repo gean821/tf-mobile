@@ -21,20 +21,30 @@ export const useNotaFiscal = () => {
 
     const salvarNotaMutation = useMutation({
         mutationFn: NotaFiscalService.saveParsedData,
-        onSuccess: () => {
+        onSuccess: (data) => {
+            setNotaStore(data);
             Alert.alert("Sucesso", "Nota fiscal agendada com sucesso!");
         },
-        onError: (error) => {
-            console.error("Erro salvar:", error);
-            Alert.alert("Erro", "Falha ao salvar os dados da nota.");
+        onError: (error: any) => {
+            const serverError = error.response?.data;
+            console.error("Erro detalhado do servidor:", JSON.stringify(serverError, null, 2));
+
+            // Se for erro de validação do FluentValidation, ele retorna um array de erros
+            if (serverError?.errors) {
+                const mensagens = Object.values(serverError.errors).flat().join('\n');
+                Alert.alert("Dados Inválidos", mensagens);
+            } else {
+                Alert.alert("Erro", "Falha ao salvar. Verifique o console.");
+            }
         }
     });
 
     const buscarNotaPorChaveMutation = useMutation({
         mutationFn: NotaFiscalService.buscarNotaPorChave,
         onSuccess: (data) => {
-            Alert.alert("Sucesso, nota salva com sucesso");
+            console.log("RETORNO DO SAVE >>>", JSON.stringify(data, null, 2));
             setNotaStore(data);
+            Alert.alert("Sucesso, nota salva com sucesso");
         },
         onError: (error) => {
             console.error("erro:", error);
