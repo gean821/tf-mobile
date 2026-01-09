@@ -1,3 +1,5 @@
+import { TipoVeiculo } from "@/src/enums/TipoVeiculo";
+
 export default interface IAgendamentoResponseDto {
     id: string;
     unidadeDescarga: string;
@@ -7,7 +9,7 @@ export default interface IAgendamentoResponseDto {
     notaFiscal: string;
     placaVeiculo: string;
     horarioInicio: string;
-    tipoVeiculo: string;
+    tipoVeiculo: TipoVeiculo;
     createdAt: string;
     updatedAt: string;
     status: string;

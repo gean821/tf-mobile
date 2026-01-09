@@ -1,10 +1,13 @@
 import { Button, ButtonSpinner, ButtonText } from "@/components/ui/button";
 import { HStack } from "@/components/ui/hstack";
 import { Icon } from "@/components/ui/icon";
+import { Input, InputField } from "@/components/ui/input";
 import { Pressable } from '@/components/ui/pressable';
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import { ProdutoSelectModal } from "@/src/components/modals/produtoSelectModal";
+import { TipoVeiculoLabels, TipoVeiculoSelectModal } from "@/src/components/modals/tipoVeiculoSelectModal";
+import { TipoVeiculo } from "@/src/enums/TipoVeiculo";
 import { useNotaFiscal } from "@/src/hooks/useNotaFiscal";
 import { useNotaFiscalStore } from '@/src/stores/useNotaFiscalStore';
 import { useRouter } from "expo-router";
@@ -19,8 +22,12 @@ export default function ConferenciaNota() {
     const { salvarNota, isSaving } = useNotaFiscal();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+    const [placa, setPlaca] = useState('');
+    const [tipoVeiculo, setTipoVeiculo] = useState<TipoVeiculo>();
+    const [showTipoModal, setShowTipoModal] = useState(false);
+    const setDadosVeiculo = useNotaFiscalStore(state => state.setDadosVeiculo);
+    
 
-    // Se por acaso o usuário cair aqui sem nota (refresh da página em dev), volta
     useEffect(() => {
         if (!nota) {
             router.replace("/agendamento/agendar");
@@ -32,7 +39,6 @@ export default function ConferenciaNota() {
         return null;
     }
 
-    // --- LÓGICA DE VÍNCULO ---
     const handleOpenModal = (index: number) => {
         setSelectedIndex(index);
         setIsModalOpen(true);
@@ -40,7 +46,7 @@ export default function ConferenciaNota() {
 
     const handleSelectProduct = (id: string, nome: string) => {
         if (selectedIndex !== null) {
-            
+
             // Atualiza a Store (Amarelo -> Verde instantaneamente)
             vincularProduto(selectedIndex, id, nome);
         }
@@ -48,8 +54,7 @@ export default function ConferenciaNota() {
         setSelectedIndex(null);
     };
 
-    
-    const handleConfirmarTudo = async () => {    
+    const handleConfirmarTudo = async () => {
         const itensPendentes = nota.itens.filter(i => !i.produtoSistemaId);
 
         if (itensPendentes.length > 0) {
@@ -59,6 +64,14 @@ export default function ConferenciaNota() {
             );
             return;
         }
+        if (!nota.placaVeiculo) {
+            if (!placa || !tipoVeiculo) {
+                Alert.alert("Atenção", "Informe a placa e o tipo do veículo.");
+                return;
+            }
+
+            setDadosVeiculo(placa, tipoVeiculo);
+        }
 
         await salvarNota(nota);
         console.log("Dados da Nota:", nota);
@@ -67,12 +80,50 @@ export default function ConferenciaNota() {
 
     return (
         <ScrollView className="flex-1 bg-gray-50"
-        contentContainerStyle={{paddingBottom: 100}}>
+            contentContainerStyle={{ paddingBottom: 100 }}>
             <View className="bg-white p-6 border-b border-gray-200">
                 <Text className="text-gray-500 text-xs font-bold uppercase">Nota Fiscal</Text>
                 <Text className="text-xl font-bold text-gray-800">{nota.numero} - {nota.serie}</Text>
                 <Text className="text-gray-600">{nota.emitenteNome}</Text>
             </View>
+
+            {!nota.placaVeiculo && (
+                <View className="bg-white p-4 mt-2 border-y border-gray-200">
+                    <Text className="text-gray-500 text-xs font-bold uppercase mb-3">
+                        Dados do Veículo
+                    </Text>
+
+                    <VStack space="md">
+                        {/* Placa */}
+                        <View>
+                            <Text className="text-xs text-gray-400 mb-1">Placa do Cavalo/Veículo</Text>
+                            <Input className="border-gray-300 rounded-lg bg-gray-50 h-12">
+                                <InputField
+                                    placeholder="AAA-0000"
+                                    value={placa}
+                                    onChangeText={setPlaca}
+                                    autoCapitalize="characters"
+                                />
+                            </Input>
+                        </View>
+
+                        <View>
+                            <Text className="text-xs text-gray-400 mb-1">Tipo de Carroceria</Text>
+                            <Pressable
+                                onPress={() => setShowTipoModal(true)}
+                                className="h-12 bg-gray-50 border border-gray-300 rounded-lg justify-center px-3"
+                            >
+                                <HStack className="justify-between items-center">
+                                    <Text className="text-gray-800">
+                                        {tipoVeiculo ? TipoVeiculoLabels[tipoVeiculo] : "Selecione o tipo..."}
+                                    </Text>
+                                    <Icon as={ChevronDown} size="sm" className="text-gray-400" />
+                                </HStack>
+                            </Pressable>
+                        </View>
+                    </VStack>
+                </View>
+            )}
 
             <VStack space="md" className="p-4">
                 <Text className="font-bold text-gray-700 ml-1">Itens da Nota ({nota.itens.length})</Text>
@@ -140,11 +191,19 @@ export default function ConferenciaNota() {
                 </Button>
             </View>
 
-            <ProdutoSelectModal 
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    onSelect={handleSelectProduct}
-                />
+            <ProdutoSelectModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSelect={handleSelectProduct}
+            />
+
+            <TipoVeiculoSelectModal
+                isOpen={showTipoModal}
+                onClose={() => setShowTipoModal(false)}
+                onSelect={setTipoVeiculo}
+                selectedType={tipoVeiculo}
+            />
+
         </ScrollView>
 
 

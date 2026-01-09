@@ -1,11 +1,14 @@
 import { create } from "zustand";
 import INotaFiscalParsedDto from "../Dtos/INotaFiscalParsedDto";
+import { TipoVeiculo } from "../enums/TipoVeiculo";
 
 export default interface NotaFiscalState {
     notaEmConferencia: INotaFiscalParsedDto | null,
     setNotaEmConferencia: (nota: INotaFiscalParsedDto) => void;
     vincularProdutoItem: (index: number, produtoId: string, nome: string) => void;
-    limparNota: () => void;
+    placaVeiculo?: string;
+    tipoVeiculo?: TipoVeiculo; limparNota: () => void;
+    setDadosVeiculo: (placa: string, tipo: TipoVeiculo) => void;
 }
 
 export const useNotaFiscalStore = create<NotaFiscalState>((set) => ({
@@ -34,5 +37,10 @@ export const useNotaFiscalStore = create<NotaFiscalState>((set) => ({
             }
         };
 
+    }),
+    
+    setDadosVeiculo: (placa, tipo) => set({
+        placaVeiculo: placa,
+        tipoVeiculo: tipo
     }),
 }));

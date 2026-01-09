@@ -5,6 +5,7 @@ import Veiculo from "./IVeiculo";
 export default interface IMotorista extends EntidadeBase {
     nome: string;
     telefone: string;
-    veiculo?: Veiculo;
-    usuario?: Usuario; 
+    veiculos?: Veiculo[];
+    usuario?: Usuario;
+    usuarioId?: string; 
 }

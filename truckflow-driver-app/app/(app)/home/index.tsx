@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { Bell, CalendarPlus, CalendarRange, Settings } from "lucide-react-native";
+import { Bell, CalendarPlus, CalendarRange, LogOut, Settings } from "lucide-react-native";
 import { ScrollView, View } from "react-native";
 
 import { HStack } from "@/components/ui/hstack";
@@ -7,8 +7,8 @@ import { Icon } from "@/components/ui/icon";
 import { Pressable } from "@/components/ui/pressable";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
+import { useAuthStore } from "@/src/stores/useAuthStore";
 
-// Componente ActionCard (Mantido igual)
 const ActionCard = ({ title, icon: IconComponent, onPress, color = "blue" }: any) => (
     <Pressable 
         onPress={onPress} 
@@ -25,13 +25,17 @@ const ActionCard = ({ title, icon: IconComponent, onPress, color = "blue" }: any
 
 export default function Home() {
     const router = useRouter();
-    const driverName = "Gean Luca";
+    const store = useAuthStore();
+    const driverName = store.user?.unique_name;
+
+    const handleLogOut = () => {
+        store.signOut();
+        router.push('/(auth)/login')
+    }
 
     return (
         <ScrollView className="flex-1 bg-gray-50" showsVerticalScrollIndicator={false}>
-            
-            {/* EXTENSÃO DO CABEÇALHO */}
-            {/* Note o 'pt-2' e 'rounded-b-[40px]'. Isso cria a continuidade visual com a Navbar */}
+
             <View className="bg-[#195FA0] pb-10 pt-2 px-6 rounded-b-[40px]">
                 <VStack>
                     <Text className="text-blue-200 font-medium text-sm">Bem-vindo de volta,</Text>
@@ -90,8 +94,16 @@ export default function Home() {
                             icon={Settings} 
                             onPress={() => router.push("/(app)/usuario/perfl")} 
                         />
-                        <View className="flex-1" />
+                        
+
+                        <ActionCard 
+                            title="Sair" 
+                            icon={LogOut} 
+                            onPress={(handleLogOut)} 
+                        />
+                        <View className="flex-4" />
                     </HStack>
+
                 </VStack>
 
             </VStack>

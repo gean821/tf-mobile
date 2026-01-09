@@ -17,6 +17,7 @@ export default function Horarios() {
     const nota = useNotaFiscalStore(state => state.notaEmConferencia);
     const [vagas, setVagas] = useState<IAgendamentoResponseDto[]>([]);
     const [loading, setLoading] = useState(true);
+    const { placaVeiculo, tipoVeiculo } = useNotaFiscalStore();
     const [confirming, setConfirming] = useState(false);
     const {
         agendamentosDisponiveis,
@@ -59,7 +60,9 @@ export default function Horarios() {
             await AgendamentoService.BookApointment({
                 agendamentoId: agendamentoSelecionado.id,
                 notaFiscalChaveAcesso: nota.chaveAcesso,
-                usuarioId: '11111111-1111-1111-1111-111111111111'
+                usuarioId: '11111111-1111-1111-1111-111111111111',
+                placaVeiculo: placaVeiculo,
+                tipoVeiculo: tipoVeiculo
             });
 
             Alert.alert("Sucesso!", "Agendamento confirmado.", [
