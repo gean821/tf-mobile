@@ -4,6 +4,7 @@ import { VStack } from "@/components/ui/vstack";
 import { AgendamentoCard } from "@/src/components/cards/agendamentoCard";
 import { StatusAgendamento } from "@/src/enums/AgendamentoStatus";
 import { useAgendamentoStore } from "@/src/stores/useAgendamentoStore";
+import { useAuthStore } from "@/src/stores/useAuthStore";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, RefreshControl, ScrollView, View } from "react-native";
@@ -11,16 +12,18 @@ export default function MeusAgendamentos() {
     const router = useRouter();
     const { meusAgendamentos, fetchMeusAgendamentos, isLoading } = useAgendamentoStore();
     const [activeTab, setActiveTab] = useState<'proximos' | 'historico'>('proximos');
-
+    const authStore = useAuthStore();
+    
     // ID Mockado por enquanto (depois virá do AuthContext que vou fazer no backend jaja)
-    const motoristaId = "8DEE9B88-0EC9-4124-A006-6AAED9DA9AED";
+    // const motoristaId = "8DEE9B88-0EC9-4124-A006-6AAED9DA9AED";
+    const motoristaId = authStore.user?.MotoristaId;
 
     useEffect(() => {
         carregarDados();
     }, []);
 
     const carregarDados = () => {
-        fetchMeusAgendamentos(motoristaId);
+        fetchMeusAgendamentos(motoristaId!);
     };
 
     
@@ -28,8 +31,6 @@ export default function MeusAgendamentos() {
         return statusApi?.toLowerCase() === StatusAgendamento[statusEnum]?.toLowerCase();
     };
 
-    // Lógica de Filtragem (Client-Side)
-    // Isso é super rápido e evita chamadas extras ao backend
     const listaProximos = meusAgendamentos.filter(a =>
         a.status === StatusAgendamento.Agendado.toString() ||
         a.status === StatusAgendamento.EmAndamento.toString() ||
