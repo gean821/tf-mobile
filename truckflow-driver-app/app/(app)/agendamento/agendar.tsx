@@ -18,14 +18,12 @@ import { OptionCard } from '@/src/components/cards/optionCard';
 import { KeyInputModal } from '@/src/components/modals/keyInputModal';
 import { useNotaFiscal } from '@/src/hooks/useNotaFiscal';
 
-
 export default function Agendar() {
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
     const { isUploading, uploadXml, buscarNota, salvarNota, isSaving, isSearching} = useNotaFiscal();
     
-    // 1. Ação: Upload de XML (O teste de fogo)
-    const handleUploadFile = async () => {
+    const handleUploadFile = async () => { 
         if (isUploading) {
             return;
         }

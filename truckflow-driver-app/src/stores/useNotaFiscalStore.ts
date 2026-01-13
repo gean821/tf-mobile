@@ -36,7 +36,6 @@ export const useNotaFiscalStore = create<NotaFiscalState>((set) => ({
                 itens: novosItens
             }
         };
-
     }),
     
     setDadosVeiculo: (placa, tipo) => set({

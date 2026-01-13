@@ -5,6 +5,7 @@ import { VStack } from "@/components/ui/vstack";
 import IAgendamentoResponseDto from "@/src/Dtos/Agendamento/IAgendamentoResponseDto";
 import AgendamentoService from "@/src/services/AgendamentoService";
 import { useAgendamentoStore } from "@/src/stores/useAgendamentoStore";
+import { useAuthStore } from "@/src/stores/useAuthStore";
 import { useNotaFiscalStore } from "@/src/stores/useNotaFiscalStore";
 import { format, parseISO } from 'date-fns';
 import { useRouter } from "expo-router";
@@ -27,6 +28,8 @@ export default function Horarios() {
         agendamentoSelecionado,
         reservarVaga
     } = useAgendamentoStore();
+    
+    const authStore = useAuthStore();
 
 
     useEffect(() => {
@@ -60,13 +63,13 @@ export default function Horarios() {
             await AgendamentoService.BookApointment({
                 agendamentoId: agendamentoSelecionado.id,
                 notaFiscalChaveAcesso: nota.chaveAcesso,
-                usuarioId: '11111111-1111-1111-1111-111111111111',
+                usuarioId: authStore.user!.UserId,
                 placaVeiculo: placaVeiculo,
                 tipoVeiculo: tipoVeiculo
             });
 
             Alert.alert("Sucesso!", "Agendamento confirmado.", [
-                { text: "OK", onPress: () => router.push('/(app)/home') }
+                { text: "OK", onPress: () => router.push('/agendamento/ticketAgendamento') }
             ]);
 
         } catch (error: any) {
