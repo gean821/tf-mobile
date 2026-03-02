@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
+import { router } from "expo-router";
 import { Alert } from "react-native";
 import NotaFiscalService from "../services/NotaFiscalService";
 import { useNotaFiscalStore } from "../stores/useNotaFiscalStore";
@@ -23,7 +24,7 @@ export const useNotaFiscal = () => {
         mutationFn: NotaFiscalService.saveParsedData,
         onSuccess: (data) => {
             setNotaStore(data);
-            Alert.alert("Sucesso", "Nota fiscal agendada com sucesso!");
+            Alert.alert("Sucesso", "Dados da nota fiscal validados com sucesso!");
         },
         onError: (error: any) => {
             const serverError = error.response?.data;
@@ -44,11 +45,27 @@ export const useNotaFiscal = () => {
         onSuccess: (data) => {
             console.log("RETORNO DO SAVE >>>", JSON.stringify(data, null, 2));
             setNotaStore(data);
-            Alert.alert("Sucesso, nota salva com sucesso");
+            Alert.alert("Sucesso, nota encontrada com sucesso");
         },
-        onError: (error) => {
-            console.error("erro:", error);
-            Alert.alert("Erro ao buscar a nota por digito, verifique se está correto.");
+        onError: (error: any) => {
+            if (error.response?.status === 404) {
+                Alert.alert(
+                    "Nota não encontrada",
+                    "Esta nota não foi encontrada no sistema. Tente de outra forma.",
+                    [
+                        { text: "Cancelar", style: "cancel" },
+                        {
+                            text: "Tentar de outra forma",
+                            onPress: () => {
+                                router.push('/(app)/agendamento/agendar')
+                            }
+                        }
+                    ]
+                );
+            } else {
+                Alert.alert("Erro", "Falha ao buscar a nota. Verifique sua conexão.");
+                console.error("Erro busca:", error);
+            }
         }
     })
 

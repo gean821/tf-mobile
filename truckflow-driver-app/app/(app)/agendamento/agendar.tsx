@@ -1,8 +1,8 @@
 import * as DocumentPicker from 'expo-document-picker'; // Agora seguro de usar!
 import { useRouter } from "expo-router";
 import {
+    ArrowLeft,
     Camera,
-    FileText,
     FileUp,
     Keyboard
 } from "lucide-react-native";
@@ -10,27 +10,27 @@ import React, { useState } from 'react';
 import { Alert, ScrollView, View } from "react-native";
 
 import { HStack } from "@/components/ui/hstack";
-import { Icon } from "@/components/ui/icon";
-import { Pressable } from "@/components/ui/pressable";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import { OptionCard } from '@/src/components/cards/optionCard';
+import Scanner from '@/src/components/cards/scanner';
 import { KeyInputModal } from '@/src/components/modals/keyInputModal';
 import { useNotaFiscal } from '@/src/hooks/useNotaFiscal';
 
 export default function Agendar() {
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
-    const { isUploading, uploadXml, buscarNota, salvarNota, isSaving, isSearching} = useNotaFiscal();
-    
-    const handleUploadFile = async () => { 
+    const { isUploading, uploadXml, buscarNota, isSaving, isSearching } = useNotaFiscal();
+    const [isScanning, setIsScanning] = useState(false);
+
+    const handleUploadFile = async () => {
         if (isUploading) {
             return;
         }
 
         try {
             console.log("Iniciando picker...");
-            
+
             const result = await DocumentPicker.getDocumentAsync({
                 type: ['application/xml', 'text/xml'],
                 copyToCacheDirectory: true,
@@ -40,9 +40,9 @@ export default function Agendar() {
                 console.log("Cancelado pelo usuário");
                 return;
             }
-            
-            const xmlUpload =  await uploadXml(result.assets[0].uri);
-            
+
+            const xmlUpload = await uploadXml(result.assets[0].uri);
+
             if (xmlUpload) {
                 router.push('/(app)/agendamento/conferencia')
             }
@@ -60,28 +60,39 @@ export default function Agendar() {
     const onConfirmKey = async (chave: string) => {
         await buscarNota(chave);
         setIsOpen(false);
+        router.push('/(app)/agendamento/conferencia')
     }
 
     // 2. Ação: Ler Código de Barras
     const handleScanBarcode = () => {
-        // Futuramente levaremos para a tela de câmera
-        Alert.alert("Scanner", "Vamos implementar a câmera na próxima etapa!");
+        setIsScanning(true);
     };
 
-    // 4. Ação: Manual (Fallback)
-    const handleManualEntry = () => {
-        // router.push("/agendamento/formulario-manual");
-        router.push('/(app)/agendamento/conferencia')
-     };
+    const onScannedCode = async (chave: string) => {
+        console.log("Chave lida:", chave);
+        //todo: Adicionar um loading ou feedback aqui
+
+        await onConfirmKey(chave);
+        setIsScanning(false);
+    };
+
+    if (isScanning) {
+        return (
+            <Scanner
+                onScanned={onScannedCode}
+                onClose={() => setIsScanning(false)}
+            />
+        )
+    }
 
     return (
         <ScrollView className="flex-1 bg-gray-50" contentContainerStyle={{ paddingBottom: 40 }}>
-            <KeyInputModal 
+            <KeyInputModal
                 isLoading={isSearching}
                 isOpen={isOpen}
                 onClose={() => setIsOpen(false)}
                 onConfirm={onConfirmKey}
-            />            
+            />
 
             <View className="bg-[#195FA0] pt-12 pb-8 px-6 rounded-b-[30px]">
                 <Text className="text-white font-bold text-2xl">Nova Carga</Text>
@@ -102,7 +113,7 @@ export default function Agendar() {
 
                 <OptionCard
                     icon={FileUp}
-                    title="Carregar XML"
+                    title="Carregar Nota Fiscal"
                     subtitle="Se você tem o arquivo no celular"
                     onPress={handleUploadFile}
                     disabled={isUploading}
@@ -121,18 +132,15 @@ export default function Agendar() {
                     <View className="h-[1px] bg-gray-300 flex-1" />
                 </HStack>
 
-                <Pressable
-                    onPress={handleManualEntry}
-                    className="p-4 border border-dashed border-gray-400 rounded-xl active:bg-gray-100"
-                >
-                    <HStack className="justify-center items-center" space="sm">
-                        <Icon as={FileText} size="sm" className="text-gray-600" />
-                        <Text className="text-gray-600 font-bold">
-                            Preencher manualmente (Sem Nota)
-                        </Text>
-                    </HStack>
-                </Pressable>
-
+                <HStack className="items-center justify-center my-4 opacity-50">
+                    <View className="h-[1px] bg-gray-300 flex-1" />
+                    <OptionCard
+                        icon={ArrowLeft}
+                        title="Voltar ao menu"
+                        onPress={router.back}
+                    />
+                    <View className="h-[1px] bg-gray-300 flex-1" />
+                </HStack>
             </VStack>
         </ScrollView>
     );

@@ -33,4 +33,3 @@ export const OptionCard = ({ icon: IconComp, title, subtitle, onPress, isPrimary
     </Pressable>
 );
 
- 

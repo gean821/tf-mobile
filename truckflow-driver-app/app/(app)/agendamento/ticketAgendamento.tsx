@@ -15,7 +15,7 @@ import { ScrollView, View } from "react-native";
 
 export default function TicketAgendamento() {
     const router = useRouter();
-    
+
     const { agendamentoSelecionado } = useAgendamentoStore();
     const { placaVeiculo, notaEmConferencia } = useNotaFiscalStore();
 
@@ -32,12 +32,11 @@ export default function TicketAgendamento() {
 
     const dataFormatada = format(parseISO(agendamentoSelecionado.horarioInicio), "EEE, d 'de' MMMM", { locale: ptBR });
     const hora = format(parseISO(agendamentoSelecionado.horarioInicio), "HH:mm");
-    // const horaFim = format(parseISO(agendamentoSelecionado.), "HH:mm");
 
     return (
         <View className="flex-1 bg-[#195FA0]">
             <ScrollView contentContainerStyle={{ paddingBottom: 40, flexGrow: 1 }} showsVerticalScrollIndicator={false}>
-                
+
                 <Center className="pt-16 pb-8">
                     <View className="bg-white/20 p-4 rounded-full mb-4">
                         <Icon as={CheckCircle2} size="xl" className="text-white" />
@@ -46,9 +45,8 @@ export default function TicketAgendamento() {
                     <Text className="text-blue-100 mt-1">Sua vaga foi reservada com sucesso.</Text>
                 </Center>
 
-
                 <View className="mx-6 bg-white rounded-3xl overflow-hidden shadow-2xl shadow-black/50">
-                    
+
                     <View className="p-6 bg-gray-50 border-b border-dashed border-gray-300">
                         <HStack className="justify-between items-center mb-6">
                             <VStack>
@@ -79,7 +77,6 @@ export default function TicketAgendamento() {
                         </HStack>
                     </View>
 
-                    {/* Meio do Ticket (Detalhes) */}
                     <View className="p-6">
                         <VStack space="md">
                             <HStack className="justify-between">
@@ -99,10 +96,9 @@ export default function TicketAgendamento() {
                             </HStack>
                         </VStack>
 
-                        {/* Área do QR Code (Fake por enquanto, ou use lib) */}
                         <Center className="mt-8 mb-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
                             {/* Aqui você usaria <QRCode value={id} /> no futuro */}
-                            <Icon as={QrCode} size="xl" className="text-gray-800 w-32 h-32" /> 
+                            <Icon as={QrCode} size="xl" className="text-gray-800 w-32 h-32" />
                             <Text className="text-xs text-gray-400 mt-2 text-center">
                                 Apresente este código na portaria
                             </Text>
@@ -113,10 +109,9 @@ export default function TicketAgendamento() {
                     </View>
                 </View>
 
-                {/* Botões de Ação (Abaixo do Ticket) */}
                 <VStack space="md" className="px-6 mt-8">
-                    <Button 
-                        size="xl" 
+                    <Button
+                        size="xl"
                         className="bg-white rounded-xl shadow-lg"
                         onPress={() => router.replace("/(app)/home")}
                     >
@@ -124,9 +119,9 @@ export default function TicketAgendamento() {
                         <Icon as={Home} className="text-[#195FA0] ml-2" />
                     </Button>
 
-                    <Button 
-                        variant="link" 
-                        onPress={() => {/* Lógica do Waze/Maps aqui FUTURAMENTE*/}}
+                    <Button
+                        variant="link"
+                        onPress={() => {/* Lógica do Waze/Maps aqui FUTURAMENTE*/ }}
                         className="mt-2"
                     >
                         <Icon as={Navigation} size="sm" className="text-blue-200 mr-2" />

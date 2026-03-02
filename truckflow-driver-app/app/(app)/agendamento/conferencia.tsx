@@ -64,6 +64,7 @@ export default function ConferenciaNota() {
             );
             return;
         }
+        
         if (!nota.placaVeiculo) {
             if (!placa || !tipoVeiculo) {
                 Alert.alert("Atenção", "Informe a placa e o tipo do veículo.");
@@ -205,7 +206,5 @@ export default function ConferenciaNota() {
             />
 
         </ScrollView>
-
-
     );
 }
