@@ -39,14 +39,14 @@ export default function Horarios() {
         }
 
 
-        if (!nota.fornecedorId || nota.fornecedorId === '00000000-0000-0000-0000-000000000000') {
-            Alert.alert("Erro", "Fornecedor não identificado. Tente enviar a nota novamente.");
-            router.back();
-            return;
-        }
+        // if (!nota.fornecedorId || nota.fornecedorId === '00000000-0000-0000-0000-000000000000') {
+        //     Alert.alert("Erro", "Fornecedor não identificado. Tente enviar a nota novamente.");
+        //     router.back();
+        //     return;
+        // }
 
         const hoje = format(new Date(), 'yyyy-MM-dd');
-        carregarVagas(nota.fornecedorId, hoje);
+        carregarVagas(nota.fornecedorId!, hoje);
 
     }, [nota]);
 

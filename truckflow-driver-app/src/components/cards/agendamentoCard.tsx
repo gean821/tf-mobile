@@ -18,29 +18,35 @@ export const AgendamentoCard = ({ data, isHistory }: CardProps) => {
     const dia = format(dataObj, "dd 'de' MMM", { locale: ptBR });
     const hora = format(dataObj, "HH:mm");
 
-   const getStatusStyle = (status: string) => {
-        // Normaliza para comparar com segurança
+    const getStatusStyle = (status: string) => {
         const s = status?.toString().toLowerCase() || "";
 
         if (s === 'confirmado' || s === 'emandamento' || s === 'agendado') {
-             return { bg: 'bg-blue-100', text: 'text-blue-700', border: 'border-blue-200' };
+            return { bg: 'bg-blue-100', text: 'text-blue-700', border: 'border-blue-200' };
         }
         if (s === 'concluido' || s === 'finalizado') {
-             return { bg: 'bg-green-100', text: 'text-green-700', border: 'border-green-200' };
+            return { bg: 'bg-green-100', text: 'text-green-700', border: 'border-green-200' };
         }
         if (s === 'cancelado') {
-             return { bg: 'bg-red-100', text: 'text-red-700', border: 'border-red-200' };
+            return { bg: 'bg-red-100', text: 'text-red-700', border: 'border-red-200' };
         }
-    
+
         return { bg: 'bg-gray-100', text: 'text-gray-600', border: 'border-gray-200' };
     };
 
     const style = getStatusStyle(data.status);
 
+    const formatStatus = (status: string) => {
+        if (!status) {
+            return "-";
+        }
+
+        return status.replace(/([A-Z])/g, ' $1').trim();
+    };
+
     return (
         <Pressable className={`bg-white rounded-2xl p-4 mb-4 border ${isHistory ? 'border-gray-200 opacity-90' : 'border-blue-100 shadow-sm'}`}>
 
-            {/* Cabeçalho: Hora e Status */}
             <View className="flex-row justify-between items-start mb-3">
                 <View className="flex-row items-center">
                     <View className="bg-gray-50 p-2 rounded-lg items-center justify-center mr-3 border border-gray-100">
@@ -58,14 +64,13 @@ export const AgendamentoCard = ({ data, isHistory }: CardProps) => {
 
                 <View className={`px-2 py-1 rounded-md ${style.bg}`}>
                     <Text className={`text-[10px] font-bold uppercase ${style.text}`}>
-                        {data.status}
+                        {formatStatus(data.status)}
                     </Text>
                 </View>
             </View>
 
             <View className="h-[1px] bg-gray-100 mb-3" />
 
-            {/* Detalhes da Carga */}
             <View className="flex-row justify-between items-center">
                 <View className="flex-row items-center">
                     <Icon as={Package} size="xs" className="text-gray-400 mr-1.5" />

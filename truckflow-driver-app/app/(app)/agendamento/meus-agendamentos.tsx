@@ -13,9 +13,7 @@ export default function MeusAgendamentos() {
     const { meusAgendamentos, fetchMeusAgendamentos, isLoading } = useAgendamentoStore();
     const [activeTab, setActiveTab] = useState<'proximos' | 'historico'>('proximos');
     const authStore = useAuthStore();
-    
-    // ID Mockado por enquanto (depois virá do AuthContext que vou fazer no backend jaja)
-    // const motoristaId = "8DEE9B88-0EC9-4124-A006-6AAED9DA9AED";
+
     const motoristaId = authStore.user?.MotoristaId;
 
     useEffect(() => {
@@ -26,7 +24,6 @@ export default function MeusAgendamentos() {
         fetchMeusAgendamentos(motoristaId!);
     };
 
-    
     const isStatus = (statusApi: string, statusEnum: StatusAgendamento) => {
         return statusApi?.toLowerCase() === StatusAgendamento[statusEnum]?.toLowerCase();
     };
@@ -37,9 +34,9 @@ export default function MeusAgendamentos() {
         a.status === StatusAgendamento.Finalizado.toString()
     );
 
-    const listaHistorico = meusAgendamentos.filter(a => 
-        a.status === 'Concluido' || 
-        a.status === 'Finalizado' || 
+    const listaHistorico = meusAgendamentos.filter(a =>
+        a.status === 'Concluido' ||
+        a.status === 'Finalizado' ||
         a.status === 'Cancelado'
     );
 
@@ -47,7 +44,6 @@ export default function MeusAgendamentos() {
 
     return (
         <View className="flex-1 bg-gray-50">
-            {/* Header Moderno */}
             <View className="bg-[#195FA0] pt-12 pb-4 px-6 rounded-b-[30px] shadow-sm">
                 <Text className="text-white font-bold text-2xl">Minhas Viagens</Text>
                 <Text className="text-blue-100 text-sm mt-1">
@@ -55,7 +51,6 @@ export default function MeusAgendamentos() {
                 </Text>
             </View>
 
-            {/* Componente de Abas (Tabs) */}
             <View className="flex-row px-6 mt-4 mb-2">
                 <Pressable
                     onPress={() => setActiveTab('proximos')}
@@ -76,7 +71,6 @@ export default function MeusAgendamentos() {
                 </Pressable>
             </View>
 
-            {/* Lista de Cards */}
             <ScrollView
                 className="flex-1 px-4 pt-2"
                 refreshControl={
@@ -97,7 +91,6 @@ export default function MeusAgendamentos() {
                     </VStack>
                 ) : (
                     <View className="pb-10">
-                        {/* Renderiza a lista filtrada */}
                         {listaExibida.map((item) => (
                             <AgendamentoCard
                                 key={item.id}

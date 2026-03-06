@@ -9,9 +9,9 @@ export const useNotaFiscal = () => {
     const setNotaStore = useNotaFiscalStore((state) => state.setNotaEmConferencia);
 
     const uploadXmlMutation = useMutation({
-        mutationFn: (fileUri: string) => NotaFiscalService.parseNotaFiscalXml(fileUri),
+        mutationFn: async (fileUri: string) =>
+            await NotaFiscalService.parseNotaFiscalXml(fileUri),
         onSuccess: (data) => {
-            // Guarda no Zustand para uso em outras telas.
             setNotaStore(data);
         },
         onError: (error) => {
