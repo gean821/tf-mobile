@@ -1,23 +1,10 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import ProdutoService from "../services/ProdutoService";
-
+import { useProdutosQuery } from "../queries/produto.queries";
 
 export const useProduto = () => {
-    const queryClient = useQueryClient();
-
-    const {
-        data: produtos,
-        isLoading: isLoadingProdutos,
-        error: errorProdutos
-    } = useQuery({
-        queryKey: ['getAll'],
-        staleTime: 5*60*1000,
-        queryFn: ProdutoService.GetAll,
-    });
+    const { data: produtos = [], isLoading: isLoadingProdutos } = useProdutosQuery();
 
     return {
-        produtos: produtos || [],
-        isLoadingProdutos
-    }
-
-}
+        produtos,
+        isLoadingProdutos,
+    };
+};

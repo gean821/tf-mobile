@@ -2,9 +2,17 @@ import { useAuthStore } from "@/src/stores/useAuthStore";
 import axios from "axios";
 import { router } from "expo-router";
 
+const baseURL = process.env.EXPO_PUBLIC_API_URL;
+
+if (!baseURL) {
+  console.warn(
+    "[http] EXPO_PUBLIC_API_URL não definido. Confira o arquivo .env e reinicie o Metro com `npx expo start -c`."
+  );
+}
+
 const http = axios.create(
   {
-    baseURL: 'http://192.168.1.249:56611/v1/',
+    baseURL,
     headers: { 'X-Custom-Header': 'foobar' }
   });
 

@@ -18,5 +18,10 @@ build/
 .npmrc
 yarn-error.log
 
+# Env
+.env
+.env.local
+.env.*.local
+
 # Lock duplicado fora do projeto
 ../package-lock.json

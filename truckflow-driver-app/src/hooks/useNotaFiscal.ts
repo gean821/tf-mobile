@@ -9,8 +9,8 @@ export const useNotaFiscal = () => {
     const setNotaStore = useNotaFiscalStore((state) => state.setNotaEmConferencia);
 
     const uploadXmlMutation = useMutation({
-        mutationFn: async (fileUri: string) =>
-            await NotaFiscalService.parseNotaFiscalXml(fileUri),
+        mutationFn: (fileUri: string) =>
+            NotaFiscalService.parseNotaFiscalXml(fileUri),
         onSuccess: (data) => {
             setNotaStore(data);
         },
@@ -30,7 +30,6 @@ export const useNotaFiscal = () => {
             const serverError = error.response?.data;
             console.error("Erro detalhado do servidor:", JSON.stringify(serverError, null, 2));
 
-            // Se for erro de validação do FluentValidation, ele retorna um array de erros
             if (serverError?.errors) {
                 const mensagens = Object.values(serverError.errors).flat().join('\n');
                 Alert.alert("Dados Inválidos", mensagens);

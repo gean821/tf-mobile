@@ -1,4 +1,3 @@
-import axios from "axios";
 import INotaFiscalParsedDto from "../Dtos/INotaFiscalParsedDto";
 import http from "./http/axios";
 
@@ -11,7 +10,7 @@ export default class NotaFiscalService {
             {
                 uri: fileUri,
                 name: "nota.xml",
-                type: "application/xml",
+                type: "text/xml",
             } as any
         );
 
@@ -24,16 +23,11 @@ export default class NotaFiscalService {
             console.log(pair);
         }
 
-        const { data } = await axios.post("http://192.168.1.249:56611/v1/NotaFiscal/parse",
-            formData,
-            {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-                timeout: 30000,
-            }
-        );
-
+        const { data } = await http.post("/NotaFiscal/parse", formData, {
+            timeout: 30000,
+            headers: { "Content-Type": "multipart/form-data" },
+            transformRequest: (body) => body,
+        });
 
         return data;
     }

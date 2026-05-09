@@ -11,9 +11,10 @@ export default interface INotaFiscalParsedDto {
     emitenteNome: string;
     emitenteCnpj: string;
     destinatarioNome: string;
+    destinatarioCpfCnpj: string;
     valorTotal: number;
     pesoBruto: number;
-    volumeQuantidae: number;
+    volumeQuantidade: number;
     placaVeiculo: string;
     itens: INotaFiscalItemDto[];
     tipoCarga: TipoCarga;
