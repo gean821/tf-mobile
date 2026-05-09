@@ -65,6 +65,8 @@ export default function ConferenciaNota() {
             return;
         }
         
+        let notaParaSalvar = nota;
+
         if (!nota.placaVeiculo) {
             if (!placa || !tipoVeiculo) {
                 Alert.alert("Atenção", "Informe a placa e o tipo do veículo.");
@@ -72,9 +74,10 @@ export default function ConferenciaNota() {
             }
 
             setDadosVeiculo(placa, tipoVeiculo);
+            notaParaSalvar = { ...nota, placaVeiculo: placa };
         }
 
-        await salvarNota(nota);
+        await salvarNota(notaParaSalvar);
         console.log("Dados da Nota:", nota);
         router.push('/(app)/agendamento/horarios');
     };

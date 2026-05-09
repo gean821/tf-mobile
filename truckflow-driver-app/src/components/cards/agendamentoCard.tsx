@@ -30,6 +30,9 @@ export const AgendamentoCard = ({ data, isHistory }: CardProps) => {
         if (s === 'cancelado') {
             return { bg: 'bg-red-100', text: 'text-red-700', border: 'border-red-200' };
         }
+        if (s === 'expirado') {
+            return { bg: 'bg-orange-100', text: 'text-orange-700', border: 'border-orange-200' };
+        }
 
         return { bg: 'bg-gray-100', text: 'text-gray-600', border: 'border-gray-200' };
     };

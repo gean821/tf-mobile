@@ -4,5 +4,6 @@ export enum StatusAgendamento {
     Agendado = "Agendado", // MOTORISTA RESERVOU HORÁRIO
     EmAndamento = "EmAndamento", //CHECK-IN REALIZADO NA DOCA.
     Finalizado = "Finalizado", // CHECK-OUT REALIZADO
-    Cancelado = "Cancelado" 
+    Cancelado = "Cancelado",
+    Expirado = "Expirado" // VENCEU SEM EVOLUÇÃO
 }

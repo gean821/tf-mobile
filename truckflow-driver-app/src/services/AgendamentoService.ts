@@ -6,12 +6,12 @@ export default class AgendamentoService {
 
   static async GetAvailableAppointments
     (
-      fornecedorId: string,
+      chaveAcesso: string,
       data: string
     ): Promise<IAgendamentoResponseDto[]> {
     const { data: vagas } = await http.get('/AgendamentoMotorista/disponiveis', {
       params: {
-        fornecedorId,
+        chaveAcesso,
         data
       }
     });
