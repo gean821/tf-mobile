@@ -16,10 +16,10 @@ export function useVagasDisponiveisQuery(
     });
 }
 
-export function useMeusAgendamentosQuery(motoristaId: string | undefined) {
+export function useMeusAgendamentosQuery(enabled: boolean = true) {
     return useQuery({
-        queryKey: [agendamentoQueryKey, "meus", motoristaId],
-        queryFn: async () => await AgendamentoService.getDriverAppointments(motoristaId!),
-        enabled: !!motoristaId,
+        queryKey: [agendamentoQueryKey, "meus"],
+        queryFn: async () => await AgendamentoService.getDriverAppointments(),
+        enabled,
     });
 }

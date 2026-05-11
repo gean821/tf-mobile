@@ -6,18 +6,17 @@ import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import { useMeusAgendamentosQuery } from "@/src/queries/agendamento.queries";
-import { useAuthStore } from "@/src/stores/useAuthStore";
 import { useNotaFiscalStore } from "@/src/stores/useNotaFiscalStore";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
-    CheckCircle2,
-    Home,
-    MapPin,
-    Navigation,
-    QrCode,
-    Truck,
+  CheckCircle2,
+  Home,
+  MapPin,
+  Navigation,
+  QrCode,
+  Truck,
 } from "lucide-react-native";
 import { ActivityIndicator, ScrollView, View } from "react-native";
 
@@ -26,10 +25,8 @@ export default function TicketAgendamento() {
 
   const { agendamentoId } = useLocalSearchParams<{ agendamentoId?: string }>();
   const { placaVeiculo, notaEmConferencia } = useNotaFiscalStore();
-  const motoristaId = useAuthStore((state) => state.user?.MotoristaId);
 
-  const { data: meusAgendamentos = [], isLoading } =
-    useMeusAgendamentosQuery(motoristaId);
+  const { data: meusAgendamentos = [], isLoading } = useMeusAgendamentosQuery();
 
   const agendamentoSelecionado = meusAgendamentos.find(
     (a) => a.id === agendamentoId,

@@ -56,7 +56,6 @@ export default function Horarios() {
       await reservar({
         agendamentoId: agendamentoSelecionado.id,
         notaFiscalChaveAcesso: nota.chaveAcesso,
-        usuarioId: authStore.user!.UserId,
         placaVeiculo: placaVeiculo,
         tipoVeiculo: tipoVeiculo,
       });
