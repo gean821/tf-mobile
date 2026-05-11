@@ -1,8 +1,7 @@
-import { create } from "zustand";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { jwtDecode } from "jwt-decode";
-import JwtPayload from "../Entities/JwtPayload";
 import * as SecureStore from 'expo-secure-store';
+import { jwtDecode } from "jwt-decode";
+import { create } from "zustand";
+import JwtPayload from "../Entities/JwtPayload";
 
 interface AuthState {
   token: string | null;

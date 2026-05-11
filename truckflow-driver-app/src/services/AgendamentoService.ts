@@ -20,12 +20,12 @@ export default class AgendamentoService {
   }
 
   static async BookApointment(dto: IReservarAgendamentoDto): Promise<IAgendamentoResponseDto> {
-    const {data}  = await http.post('AgendamentoMotorista/reservar', dto);
+    const { data } = await http.post('AgendamentoMotorista/reservar', dto);
     return data;
   }
 
-  static async getDriverAppointments(motoristaId: string): Promise<IAgendamentoResponseDto[]> {
-    const { data } = await http.get(`AgendamentoMotorista/meus-agendamentos/${motoristaId}`);
+  static async getDriverAppointments(): Promise<IAgendamentoResponseDto[]> {
+    const { data } = await http.get('AgendamentoMotorista/meus-agendamentos');
     return data;
   }
 }

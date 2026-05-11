@@ -21,7 +21,6 @@ export async function httpGet<T>(url: string) {
   return response.data;
 }
 
-
 http.interceptors.request.use(
   async (config) => {
     const token = useAuthStore.getState().token;
@@ -37,7 +36,6 @@ http.interceptors.request.use(
   }
 );
 
-// --- INTERCEPTOR DE RESPOSTA (Trata Erros Globais) ---
 http.interceptors.response.use(
   (response) => response,
   async (error) => {

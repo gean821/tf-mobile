@@ -8,10 +8,10 @@ import { useAuthStore } from "@/src/stores/useAuthStore";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
-    ActivityIndicator,
-    RefreshControl,
-    ScrollView,
-    View,
+  ActivityIndicator,
+  RefreshControl,
+  ScrollView,
+  View,
 } from "react-native";
 export default function MeusAgendamentos() {
   const router = useRouter();
@@ -20,24 +20,24 @@ export default function MeusAgendamentos() {
   );
   const authStore = useAuthStore();
 
-  const motoristaId = authStore.user?.MotoristaId;
+  const isLogged = !!authStore.token;
 
   const {
     data: meusAgendamentos = [],
     isLoading,
     isFetching,
     refetch,
-  } = useMeusAgendamentosQuery(motoristaId);
+  } = useMeusAgendamentosQuery(isLogged);
 
   const carregarDados = () => {
     refetch();
   };
 
-  const isStatus = (statusApi: string, statusEnum: StatusAgendamento) => {
-    return (
-      statusApi?.toLowerCase() === StatusAgendamento[statusEnum]?.toLowerCase()
-    );
-  };
+  // const isStatus = (statusApi: string, statusEnum: StatusAgendamento) => {
+  //   return (
+  //     statusApi?.toLowerCase() === StatusAgendamento[statusEnum]?.toLowerCase()
+  //   );
+  // };
 
   const listaProximos = meusAgendamentos.filter(
     (a) =>
