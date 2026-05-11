@@ -6,11 +6,12 @@ import { HStack } from '@/components/ui/hstack';
 import { Input, InputField, InputIcon, InputSlot } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
+import { toast } from "@/src/components/feedback/toast";
 import { AuthService } from "@/src/services/AuthService";
 import { router } from "expo-router";
-import { EyeIcon, EyeOffIcon, Mail, User, Phone, Lock, UserCircle } from "lucide-react-native";
+import { EyeIcon, EyeOffIcon, Lock, Mail, Phone, User, UserCircle } from "lucide-react-native";
 import { useState } from "react";
-import { Image, ScrollView, View, Alert } from "react-native"; // Importe Alert
+import { Image, ScrollView, View } from "react-native";
 
 export default function Register() {
     const [username, setUsername] = useState('');
@@ -23,7 +24,7 @@ export default function Register() {
 
     const handleRegister = async () => {
         if (!username || !email || !nomeReal || !password || !telephone) {
-            Alert.alert("Atenção", "Preencha todos os campos.");
+            toast.warning("Campos obrigatórios", "Preencha todos os campos para continuar.");
             return;
         }
 
@@ -37,12 +38,12 @@ export default function Register() {
                 telefone: telephone
             });
 
-            Alert.alert("Sucesso", "Conta criada! Faça login para continuar.");
-            router.replace('/(auth)/login'); 
+            toast.success("Conta criada!", "Faça login para continuar.");
+            router.replace('/(auth)/login');
 
         } catch (error: any) {
             console.error(error);
-            Alert.alert("Erro", "Não foi possível criar a conta. Verifique os dados.");
+            toast.error("Erro ao criar conta", "Verifique os dados e tente novamente.");
         } finally {
             setIsLoading(false);
         }

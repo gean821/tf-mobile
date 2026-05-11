@@ -12,8 +12,9 @@ import { useNotaFiscal } from "@/src/hooks/useNotaFiscal";
 import { useNotaFiscalStore } from '@/src/stores/useNotaFiscalStore';
 import { useRouter } from "expo-router";
 import { AlertTriangle, CheckCircle2, ChevronDown } from "lucide-react-native";
+import { toast } from "@/src/components/feedback/toast";
 import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 
 export default function ConferenciaNota() {
     const router = useRouter();
@@ -58,18 +59,18 @@ export default function ConferenciaNota() {
         const itensPendentes = nota.itens.filter(i => !i.produtoSistemaId);
 
         if (itensPendentes.length > 0) {
-            Alert.alert(
-                "Itens Pendentes",
-                "Existem itens amarelos sem vínculo. Vincule todos aos produtos do sistema antes de continuar."
+            toast.warning(
+                "Itens pendentes",
+                "Vincule todos os itens em amarelo aos produtos do sistema antes de continuar.",
             );
             return;
         }
-        
+
         let notaParaSalvar = nota;
 
         if (!nota.placaVeiculo) {
             if (!placa || !tipoVeiculo) {
-                Alert.alert("Atenção", "Informe a placa e o tipo do veículo.");
+                toast.warning("Dados do veículo", "Informe a placa e o tipo do veículo.");
                 return;
             }
 

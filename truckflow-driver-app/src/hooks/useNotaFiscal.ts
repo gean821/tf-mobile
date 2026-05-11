@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
-import { Alert } from "react-native";
+import { toast } from "../components/feedback/toast";
 import NotaFiscalService from "../services/NotaFiscalService";
 import { useNotaFiscalStore } from "../stores/useNotaFiscalStore";
 
@@ -16,7 +16,10 @@ export const useNotaFiscal = () => {
         },
         onError: (error) => {
             console.error("Erro upload:", error);
-            Alert.alert("Erro", "Falha ao ler a nota fiscal. Verifique se o XML é válido.");
+            toast.error(
+                "Falha ao ler a nota",
+                "Verifique se o XML é válido e tente novamente.",
+            );
         }
     });
 
@@ -24,7 +27,10 @@ export const useNotaFiscal = () => {
         mutationFn: NotaFiscalService.saveParsedData,
         onSuccess: (data) => {
             setNotaStore(data);
-            Alert.alert("Sucesso", "Dados da nota fiscal validados com sucesso!");
+            toast.success(
+                "Nota validada",
+                "Dados da nota fiscal validados com sucesso.",
+            );
         },
         onError: (error: any) => {
             const serverError = error.response?.data;
@@ -32,9 +38,9 @@ export const useNotaFiscal = () => {
 
             if (serverError?.errors) {
                 const mensagens = Object.values(serverError.errors).flat().join('\n');
-                Alert.alert("Dados Inválidos", mensagens);
+                toast.warning("Dados inválidos", mensagens);
             } else {
-                Alert.alert("Erro", "Falha ao salvar. Verifique o console.");
+                toast.error("Falha ao salvar", "Tente novamente em instantes.");
             }
         }
     });
@@ -44,25 +50,25 @@ export const useNotaFiscal = () => {
         onSuccess: (data) => {
             console.log("RETORNO DO SAVE >>>", JSON.stringify(data, null, 2));
             setNotaStore(data);
-            Alert.alert("Sucesso, nota encontrada com sucesso");
+            toast.success("Nota encontrada", "Seguindo para a conferência.");
         },
         onError: (error: any) => {
             if (error.response?.status === 404) {
-                Alert.alert(
-                    "Nota não encontrada",
-                    "Esta nota não foi encontrada no sistema. Tente de outra forma.",
-                    [
-                        { text: "Cancelar", style: "cancel" },
-                        {
-                            text: "Tentar de outra forma",
-                            onPress: () => {
-                                router.push('/(app)/agendamento/agendar')
-                            }
-                        }
-                    ]
-                );
+                toast.show({
+                    variant: "warning",
+                    title: "Nota não encontrada",
+                    description: "Esta nota não foi encontrada no sistema.",
+                    duration: 6000,
+                    action: {
+                        label: "Tentar outra forma",
+                        onPress: () => router.push('/(app)/agendamento/agendar'),
+                    },
+                });
             } else {
-                Alert.alert("Erro", "Falha ao buscar a nota. Verifique sua conexão.");
+                toast.error(
+                    "Falha ao buscar nota",
+                    "Verifique sua conexão e tente novamente.",
+                );
                 console.error("Erro busca:", error);
             }
         }

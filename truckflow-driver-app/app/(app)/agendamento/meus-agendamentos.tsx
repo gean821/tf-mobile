@@ -119,6 +119,12 @@ export default function MeusAgendamentos() {
                 key={item.id}
                 data={item}
                 isHistory={activeTab === "historico"}
+                onPress={() =>
+                  router.push({
+                    pathname: "/agendamento/ticketAgendamento",
+                    params: { agendamentoId: item.id },
+                  })
+                }
               />
             ))}
           </View>
