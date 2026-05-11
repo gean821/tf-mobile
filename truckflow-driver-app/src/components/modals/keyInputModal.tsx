@@ -6,10 +6,11 @@ import { Input, InputField } from "@/components/ui/input";
 import { Modal, ModalBackdrop, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@/components/ui/modal";
 import { Pressable } from "@/components/ui/pressable";
 import { Text } from "@/components/ui/text";
+import { toast } from "@/src/components/feedback/toast";
 import * as Clipboard from 'expo-clipboard';
 import { Clipboard as IconClipboard, X } from "lucide-react-native";
 import { useState } from "react";
-import { Alert, KeyboardAvoidingView, Platform } from "react-native";
+import { KeyboardAvoidingView, Platform } from "react-native";
 
 export default interface KeyInputModalProps {
     isOpen: boolean;
@@ -30,7 +31,10 @@ export const KeyInputModal = ({
         const cleanKey = key.replace(/\D/g, '');
 
         if (cleanKey.length !== 44) {
-            Alert.alert("Chave Inválida", `A chave deve ter exatos 44 números.\nVocê digitou: ${cleanKey.length}`);
+            toast.warning(
+                "Chave inválida",
+                `A chave deve ter 44 dígitos. Você digitou ${cleanKey.length}.`,
+            );
             return;
         }
 

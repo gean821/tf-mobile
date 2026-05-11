@@ -11,29 +11,32 @@ export const Navbar = () => {
     const insets = useSafeAreaInsets();
 
     return (
-        
-        <View 
+
+        <View
             className="bg-[#195FA0] z-50"
-            style={{ paddingTop: insets.top }} 
+            style={{ paddingTop: insets.top }}
         >
             <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
-            
+
             <HStack className="justify-between items-center px-5 py-3">
-                
+
                 <Image
                     source={require("assets/images/logo.png")}
                     style={{ width: 120, height: 50 }}
                 />
 
                 <HStack space="lg" className="items-center">
-                    <Pressable 
+                    <Pressable
                         className="bg-white/20 p-2 rounded-full active:bg-white/30"
                         onPress={() => router.push("/notificacoes/notificacao")}
                     >
-                        <Icon as={Bell} color="white" size="md" />
+                        <View>
+                            <Icon as={Bell} color="white" size="md" />
+                            <View className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-orange-400 rounded-full border-2 border-[#195FA0]" />
+                        </View>
                     </Pressable>
 
-                    <Pressable 
+                    <Pressable
                         onPress={() => router.push("/(app)/usuario/perfl")}
                         className="border-2 border-white rounded-full"
                     >

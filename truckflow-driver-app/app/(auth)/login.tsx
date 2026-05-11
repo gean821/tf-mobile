@@ -1,5 +1,6 @@
+import { toast } from "@/src/components/feedback/toast";
 import { useState } from "react";
-import { Alert, Image, ScrollView, View } from "react-native";
+import { Image, ScrollView, View } from "react-native";
 
 import { Box } from "@/components/ui/box";
 import { Button, ButtonText, ButtonSpinner } from "@/components/ui/button";
@@ -35,7 +36,7 @@ export default function Login() {
   const handleLogin = async () => {
   
     if (!form.login || !form.password) {
-      Alert.alert("Atenção", "Preencha usuário e senha para continuar.");
+      toast.warning("Campos obrigatórios", "Preencha usuário e senha para continuar.");
       return;
     }
 
@@ -51,7 +52,7 @@ export default function Login() {
     } catch (error: any) {
       console.error(error);
       const mensagem = error.response?.data?.message || "Usuário ou senha incorretos.";
-      Alert.alert("Erro no Login", mensagem);
+      toast.error("Erro no login", mensagem);
     } finally {
       setIsLoading(false);
     }
@@ -134,7 +135,7 @@ export default function Login() {
             </Button>
 
             {/* Esqueci Senha */}
-            <Button variant="link" size="sm" onPress={() => Alert.alert("Em breve", "Funcionalidade de recuperação será implementada.")}>
+            <Button variant="link" size="sm" onPress={() => toast.info("Em breve", "Funcionalidade de recuperação será implementada.")}>
               <ButtonText className="text-gray-400">Esqueci minha senha</ButtonText>
             </Button>
 

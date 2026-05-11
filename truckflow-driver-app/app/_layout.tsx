@@ -1,13 +1,15 @@
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 import '@/global.css';
+import { ToastBridge, ToastProvider } from '@/src/components/feedback/toast';
+import { useAuthStore } from '@/src/stores/useAuthStore';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Slot, Stack, useRouter, useSegments } from 'expo-router';
+import { Slot, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import { useEffect } from 'react';
+import { ActivityIndicator, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import 'react-native-reanimated';
 import "../global.css";
-import { useEffect } from 'react';
-import { useAuthStore } from '@/src/stores/useAuthStore';
-import { ActivityIndicator, View } from 'react-native';
 
 const client = new QueryClient();
 
@@ -63,14 +65,16 @@ function InitialLayout() {
 
 export default function RootLayout() {
   return (
-
-    <GluestackUIProvider mode="light">
-      <QueryClientProvider client={client}>
-        {/* <Stack screenOptions={{ headerShown: false }} /> */}
-        <InitialLayout />
-      </QueryClientProvider>
-    </GluestackUIProvider>
-
+    <SafeAreaProvider>
+      <GluestackUIProvider mode="light">
+        <QueryClientProvider client={client}>
+          <ToastProvider>
+            <ToastBridge />
+            <InitialLayout />
+          </ToastProvider>
+        </QueryClientProvider>
+      </GluestackUIProvider>
+    </SafeAreaProvider>
   );
 }
 
