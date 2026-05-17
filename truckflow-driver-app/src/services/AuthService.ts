@@ -1,4 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import MotoristaLoginDto from "../Dtos/Motorista/motoristaLoginDto";
 import MotoristaLoginResponseDto from "../Dtos/Motorista/motoristaLoginResponseDto";
 import MotoristaRegisterDto from "../Dtos/Motorista/motoristaRegisterDto";
@@ -13,8 +12,7 @@ export class AuthService {
     }
 
     static async login(dto: MotoristaLoginDto): Promise<MotoristaLoginResponseDto> {
-        const { data } = await http.post('/AuthMotorista/login', dto);
-        AsyncStorage.setItem("token", data.token);
+        const { data } = await http.post<MotoristaLoginResponseDto>('/AuthMotorista/login', dto);
         return data;
     }
 
@@ -25,5 +23,5 @@ export class AuthService {
 
     static async delete(id: string): Promise<void> {
         await http.delete(`/AuthMotorista/delete/me/${id}`);
-    } 
+    }
 }
