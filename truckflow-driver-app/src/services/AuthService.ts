@@ -3,6 +3,7 @@ import MotoristaLoginResponseDto from "../Dtos/Motorista/motoristaLoginResponseD
 import MotoristaRegisterDto from "../Dtos/Motorista/motoristaRegisterDto";
 import MotoristaResponseDto from "../Dtos/Motorista/motoristaResponseDto";
 import motoristaUpdateDto from "../Dtos/Motorista/motoristaUpdateDto";
+import VeiculoResponseDto from "../Dtos/Veiculo/veiculoResponseDto";
 import http from "./http/axios";
 
 export class AuthService {
@@ -16,12 +17,22 @@ export class AuthService {
         return data;
     }
 
-    static async update(id: string, dto: motoristaUpdateDto): Promise<MotoristaResponseDto> {
-        const adminAtualizado = await http.put(`/AuthMotorista/update/me/${id}`, dto);
-        return adminAtualizado.data;
+    static async getMe(): Promise<MotoristaResponseDto> {
+        const { data } = await http.get<MotoristaResponseDto>('/Motorista');
+        return data;
     }
 
-    static async delete(id: string): Promise<void> {
-        await http.delete(`/AuthMotorista/delete/me/${id}`);
+    static async getVeiculos(): Promise<VeiculoResponseDto[]> {
+        const { data } = await http.get<VeiculoResponseDto[]>('/Motorista/veiculos');
+        return data;
+    }
+
+    static async update(dto: motoristaUpdateDto): Promise<MotoristaResponseDto> {
+        const { data } = await http.put<MotoristaResponseDto>('/AuthMotorista/me', dto);
+        return data;
+    }
+
+    static async delete(): Promise<void> {
+        await http.delete('/AuthMotorista/me');
     }
 }
