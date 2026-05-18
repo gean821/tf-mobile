@@ -4,6 +4,7 @@ import { Icon } from "@/components/ui/icon";
 import { Pressable } from "@/components/ui/pressable";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
+import { toast } from "@/src/components/feedback/toast";
 import IAgendamentoResponseDto from "@/src/Dtos/Agendamento/IAgendamentoResponseDto";
 import { useAgendamento } from "@/src/hooks/useAgendamento";
 import { useVagasDisponiveisQuery } from "@/src/queries/agendamento.queries";
@@ -22,7 +23,6 @@ import {
   MapPin,
   Truck,
 } from "lucide-react-native";
-import { toast } from "@/src/components/feedback/toast";
 import { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, ScrollView, View } from "react-native";
 
@@ -308,7 +308,7 @@ export default function Horarios() {
                         className="text-gray-800 font-bold text-sm mt-0.5"
                         numberOfLines={1}
                       >
-                        {vaga.unidadeDescarga}
+                        {vaga.unidadeEntrega ?? "Não Informado"}
                       </Text>
                       <HStack className="items-center mt-1.5" space="xs">
                         <View className="w-1 h-1 rounded-full bg-emerald-500" />
@@ -366,7 +366,7 @@ export default function Horarios() {
                   className="text-gray-600 text-xs flex-shrink"
                   numberOfLines={1}
                 >
-                  {agendamentoSelecionado.unidadeDescarga}
+                  {agendamentoSelecionado.unidadeEntrega}
                 </Text>
               </HStack>
             </View>

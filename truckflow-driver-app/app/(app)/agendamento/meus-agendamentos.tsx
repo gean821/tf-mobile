@@ -33,24 +33,16 @@ export default function MeusAgendamentos() {
     refetch();
   };
 
-  // const isStatus = (statusApi: string, statusEnum: StatusAgendamento) => {
-  //   return (
-  //     statusApi?.toLowerCase() === StatusAgendamento[statusEnum]?.toLowerCase()
-  //   );
-  // };
-
   const listaProximos = meusAgendamentos.filter(
     (a) =>
       a.status === StatusAgendamento.Agendado.toString() ||
-      a.status === StatusAgendamento.EmAndamento.toString() ||
-      a.status === StatusAgendamento.Finalizado.toString(),
+      a.status === StatusAgendamento.EmAndamento.toString(),
   );
 
   const listaHistorico = meusAgendamentos.filter(
     (a) =>
-      a.status === "Concluido" ||
-      a.status === "Finalizado" ||
-      a.status === "Cancelado" ||
+      a.status === StatusAgendamento.Finalizado.toString() ||
+      a.status === StatusAgendamento.Cancelado.toString() ||
       a.status === StatusAgendamento.Expirado.toString(),
   );
 
@@ -85,7 +77,7 @@ export default function MeusAgendamentos() {
           <Text
             className={`font-bold text-sm ${activeTab === "historico" ? "text-[#195FA0]" : "text-gray-400"}`}
           >
-            Histórico
+            Histórico ({listaHistorico.length})
           </Text>
         </Pressable>
       </View>

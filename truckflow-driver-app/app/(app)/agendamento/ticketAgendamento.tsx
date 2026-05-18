@@ -23,62 +23,7 @@ import {
   Truck,
 } from "lucide-react-native";
 import { ActivityIndicator, ScrollView, View } from "react-native";
-
-type StatusInfo = {
-  label: string;
-  bg: string;
-  text: string;
-  title: string;
-  subtitle: string;
-};
-
-const getStatusInfo = (status: string): StatusInfo => {
-  const s = status?.toString().toLowerCase() || "";
-
-  if (s === "concluido" || s === "finalizado") {
-    return {
-      label: "Concluído",
-      bg: "bg-emerald-500/20",
-      text: "text-emerald-50",
-      title: "Viagem finalizada",
-      subtitle: "Esta entrega já foi concluída.",
-    };
-  }
-  if (s === "cancelado") {
-    return {
-      label: "Cancelado",
-      bg: "bg-rose-500/20",
-      text: "text-rose-50",
-      title: "Agendamento cancelado",
-      subtitle: "Este agendamento foi cancelado.",
-    };
-  }
-  if (s === "expirado") {
-    return {
-      label: "Expirado",
-      bg: "bg-amber-500/20",
-      text: "text-amber-50",
-      title: "Agendamento expirado",
-      subtitle: "O prazo para esta vaga acabou.",
-    };
-  }
-  if (s === "emandamento") {
-    return {
-      label: "Em andamento",
-      bg: "bg-emerald-500/20",
-      text: "text-emerald-50",
-      title: "Em andamento",
-      subtitle: "Sua descarga está acontecendo agora.",
-    };
-  }
-  return {
-    label: "Agendado",
-    bg: "bg-white/20",
-    text: "text-white",
-    title: "Tudo certo!",
-    subtitle: "Sua vaga foi reservada com sucesso.",
-  };
-};
+import { getStatusInfo } from "./GetStatusInfo";
 
 export default function TicketAgendamento() {
   const router = useRouter();
@@ -129,6 +74,7 @@ export default function TicketAgendamento() {
   const dataFormatada = format(horarioInicio, "EEE, d 'de' MMMM", {
     locale: ptBR,
   });
+
   const hora = format(horarioInicio, "HH:mm");
 
   const statusInfo = getStatusInfo(agendamentoSelecionado.status);
@@ -221,7 +167,7 @@ export default function TicketAgendamento() {
                   className="text-gray-800 font-bold text-md"
                   numberOfLines={1}
                 >
-                  {agendamentoSelecionado.unidadeDescarga}
+                  {agendamentoSelecionado.localDescarga}
                 </Text>
                 {fornecedorExibido ? (
                   <Text className="text-gray-500 text-xs" numberOfLines={1}>
@@ -309,16 +255,23 @@ export default function TicketAgendamento() {
             <Icon as={Home} className="text-[#195FA0] ml-2" />
           </Button>
 
-          <Button
-            variant="link"
-            onPress={() => {
-              /* Lógica do Waze/Maps aqui FUTURAMENTE*/
-            }}
-            className="mt-2"
-          >
-            <Icon as={Navigation} size="sm" className="text-blue-200 mr-2" />
-            <ButtonText className="text-blue-200">Abrir no GPS</ButtonText>
-          </Button>
+          {agendamentoSelecionado.latitude &&
+            agendamentoSelecionado.longitude && (
+              <Button
+                variant="link"
+                onPress={() => {
+                  /* Lógica do Waze/Maps aqui FUTURAMENTE*/
+                }}
+                className="mt-2"
+              >
+                <Icon
+                  as={Navigation}
+                  size="sm"
+                  className="text-blue-200 mr-2"
+                />
+                <ButtonText className="text-blue-200">Abrir no GPS</ButtonText>
+              </Button>
+            )}
         </VStack>
       </ScrollView>
     </View>
