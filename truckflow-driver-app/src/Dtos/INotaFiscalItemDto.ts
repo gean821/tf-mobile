@@ -1,3 +1,11 @@
+export type NotaFiscalItemStatus = 'Matched' | 'PendenteRevisao';
+
+export type OrigemMatchProduto =
+    | 'EanAuto'
+    | 'ProdFornecAuto'
+    | 'HistoricoAuto'
+    | 'AdminManual';
+
 export default interface INotaFiscalItemDto {
     codigo: string;
     descricao: string;
@@ -8,4 +16,6 @@ export default interface INotaFiscalItemDto {
     unidade?: string;
     valorUnitario: number;
     valorTotal: number;
+    status?: NotaFiscalItemStatus;
+    origemMatch?: OrigemMatchProduto;
 }

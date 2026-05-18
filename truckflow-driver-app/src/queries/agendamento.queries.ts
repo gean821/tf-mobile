@@ -13,6 +13,9 @@ export function useVagasDisponiveisQuery(
         queryFn: async () => await AgendamentoService.GetAvailableAppointments(params.chaveAcesso, params.data),
         enabled: !!params.chaveAcesso && !!params.data,
         placeholderData: keepPreviousData,
+        refetchInterval: 15_000,
+        refetchOnWindowFocus: true,
+        staleTime: 0,
     });
 }
 
@@ -21,5 +24,7 @@ export function useMeusAgendamentosQuery(enabled: boolean = true) {
         queryKey: [agendamentoQueryKey, "meus"],
         queryFn: async () => await AgendamentoService.getDriverAppointments(),
         enabled,
+        refetchInterval: 30_000,
+        refetchOnWindowFocus: true,
     });
 }
