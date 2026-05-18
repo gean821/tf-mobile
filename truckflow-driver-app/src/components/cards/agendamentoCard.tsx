@@ -94,7 +94,7 @@ export const AgendamentoCard = ({ data, isHistory, onPress }: CardProps) => {
             <View className="flex-row items-center mt-0.5">
               <Icon as={MapPin} size="xs" className="text-gray-400 mr-1" />
               <Text className="text-xs text-gray-500" numberOfLines={1}>
-                {data.unidadeDescarga}
+                {data.unidadeEntrega}
               </Text>
             </View>
           </View>

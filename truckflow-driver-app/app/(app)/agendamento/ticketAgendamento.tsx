@@ -6,6 +6,7 @@ import { Icon } from "@/components/ui/icon";
 import { Pressable } from "@/components/ui/pressable";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
+import { AbrirNoMapsButton } from "@/src/components/buttons/AbrirNoMapsButton";
 import { useMeusAgendamentosQuery } from "@/src/queries/agendamento.queries";
 import { useNotaFiscalStore } from "@/src/stores/useNotaFiscalStore";
 import { format, parseISO } from "date-fns";
@@ -17,7 +18,6 @@ import {
   FileText,
   Home,
   MapPin,
-  Navigation,
   Package,
   QrCode,
   Truck,
@@ -255,22 +255,14 @@ export default function TicketAgendamento() {
             <Icon as={Home} className="text-[#195FA0] ml-2" />
           </Button>
 
-          {agendamentoSelecionado.latitude &&
-            agendamentoSelecionado.longitude && (
-              <Button
-                variant="link"
-                onPress={() => {
-                  /* Lógica do Waze/Maps aqui FUTURAMENTE*/
-                }}
+          {agendamentoSelecionado.latitude != null &&
+            agendamentoSelecionado.longitude != null && (
+              <AbrirNoMapsButton
+                lat={agendamentoSelecionado.latitude}
+                lng={agendamentoSelecionado.longitude}
+                label="Abrir no GPS"
                 className="mt-2"
-              >
-                <Icon
-                  as={Navigation}
-                  size="sm"
-                  className="text-blue-200 mr-2"
-                />
-                <ButtonText className="text-blue-200">Abrir no GPS</ButtonText>
-              </Button>
+              />
             )}
         </VStack>
       </ScrollView>
