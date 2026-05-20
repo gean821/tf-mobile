@@ -1,8 +1,8 @@
 import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
 import { create } from "zustand";
-import JwtPayload from "../Entities/JwtPayload";
 import RefreshMobileResponseDto from "../Dtos/auth/RefreshMobileResponseDto";
+import JwtPayload from "../Entities/JwtPayload";
 
 export const REFRESH_TOKEN_KEY = "tf_refresh";
 
@@ -29,14 +29,26 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   isLoading: true,
 
   signIn: async (token, refreshToken, tokenExpiresAt) => {
-    try {
-      const decoded = jwtDecode<JwtPayload>(token);
-      await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refreshToken);
-      set({ token, refreshToken, tokenExpiresAt, user: decoded });
-    } catch (error) {
-      console.error("Erro ao salvar sessão", error);
+  try {
+    const decoded = jwtDecode<JwtPayload>(token);
+
+    if (refreshToken) {
+      await SecureStore.setItemAsync(
+        REFRESH_TOKEN_KEY,
+        String(refreshToken)
+      );
     }
-  },
+
+    set({
+      token,
+      refreshToken: refreshToken ?? null,
+      tokenExpiresAt,
+      user: decoded,
+    });
+  } catch (error) {
+    console.error("Erro ao salvar sessão", error);
+  }
+},
 
   setAccess: (token, tokenExpiresAt) => {
     try {
