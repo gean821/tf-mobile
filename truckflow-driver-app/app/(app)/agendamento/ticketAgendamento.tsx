@@ -7,6 +7,8 @@ import { Pressable } from "@/components/ui/pressable";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import { AbrirNoMapsButton } from "@/src/components/buttons/AbrirNoMapsButton";
+import { AvisarFabricaModal } from "@/src/components/modals/AvisarFabricaModal";
+import { getStatusInfo } from "@/src/components/utils/GetStatusInfo";
 import { useMeusAgendamentosQuery } from "@/src/queries/agendamento.queries";
 import { useNotaFiscalStore } from "@/src/stores/useNotaFiscalStore";
 import { format, parseISO } from "date-fns";
@@ -18,18 +20,21 @@ import {
   FileText,
   Home,
   MapPin,
+  MessageSquare,
   Package,
   QrCode,
   Truck,
 } from "lucide-react-native";
+import { useState } from "react";
 import { ActivityIndicator, ScrollView, View } from "react-native";
-import { getStatusInfo } from "./GetStatusInfo";
 
 export default function TicketAgendamento() {
   const router = useRouter();
 
   const { agendamentoId } = useLocalSearchParams<{ agendamentoId?: string }>();
   const { placaVeiculo, notaEmConferencia } = useNotaFiscalStore();
+
+  const [avisarModalOpen, setAvisarModalOpen] = useState(false);
 
   const { data: meusAgendamentos = [], isLoading } = useMeusAgendamentosQuery();
 
@@ -264,8 +269,26 @@ export default function TicketAgendamento() {
                 className="mt-2"
               />
             )}
+
+          <Button
+            variant="outline"
+            action="primary"
+            onPress={() => setAvisarModalOpen(true)}
+            className="mt-2 rounded-xl border-white"
+          >
+            <Icon as={MessageSquare} className="text-white mr-2" />
+            <ButtonText className="text-white font-bold">
+              Avisar fábrica
+            </ButtonText>
+          </Button>
         </VStack>
       </ScrollView>
+
+      <AvisarFabricaModal
+        isOpen={avisarModalOpen}
+        agendamentoId={agendamentoSelecionado.id}
+        onClose={() => setAvisarModalOpen(false)}
+      />
     </View>
   );
 }

@@ -1,6 +1,7 @@
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 import '@/global.css';
 import { ToastBridge, ToastProvider } from '@/src/components/feedback/toast';
+import { usePushRegistration } from '@/src/hooks/usePushRegistration';
 import { useAuthStore } from '@/src/stores/useAuthStore';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Slot, useRouter, useSegments } from 'expo-router';
@@ -31,6 +32,8 @@ function InitialLayout() {
   const { token, isLoading, loadSession } = useAuthStore();
   const segments = useSegments();
   const router = useRouter();
+
+  usePushRegistration();
 
   // 1. Carrega a sessão ao iniciar
   useEffect(() => {
