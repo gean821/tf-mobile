@@ -23,5 +23,9 @@ yarn-error.log
 .env.local
 .env.*.local
 
+# Firebase / FCM credentials
+google-services.json
+*-firebase-adminsdk-*.json
+
 # Lock duplicado fora do projeto
 ../package-lock.json
