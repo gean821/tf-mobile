@@ -29,26 +29,26 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   isLoading: true,
 
   signIn: async (token, refreshToken, tokenExpiresAt) => {
-  try {
-    const decoded = jwtDecode<JwtPayload>(token);
+    try {
+      const decoded = jwtDecode<JwtPayload>(token);
 
-    if (refreshToken) {
-      await SecureStore.setItemAsync(
-        REFRESH_TOKEN_KEY,
-        String(refreshToken)
-      );
+      if (refreshToken) {
+        await SecureStore.setItemAsync(
+          REFRESH_TOKEN_KEY,
+          String(refreshToken)
+        );
+      }
+
+      set({
+        token,
+        refreshToken: refreshToken ?? null,
+        tokenExpiresAt,
+        user: decoded,
+      });
+    } catch (error) {
+      console.error("Erro ao salvar sessão", error);
     }
-
-    set({
-      token,
-      refreshToken: refreshToken ?? null,
-      tokenExpiresAt,
-      user: decoded,
-    });
-  } catch (error) {
-    console.error("Erro ao salvar sessão", error);
-  }
-},
+  },
 
   setAccess: (token, tokenExpiresAt) => {
     try {
@@ -72,9 +72,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       try {
         const { default: http } = await import("../services/http/axios");
         await http.post("/Auth/logout-mobile", { refreshToken: refresh });
-      } catch {
-        // logout local prossegue mesmo se servidor falhar
-      }
+      } catch { }
     }
 
     await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
