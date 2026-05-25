@@ -34,7 +34,7 @@ interface AvisarFabricaModalProps {
 }
 
 const CORPO_MAX = 2000;
-const POLL_INTERVAL_MS = 5000;
+const POLL_INTERVAL_MS = 30000;
 
 export function AvisarFabricaModal({
   isOpen,
@@ -138,9 +138,7 @@ export function AvisarFabricaModal({
           <HStack space="sm" className="items-center">
             <Icon as={MessageSquare} className="text-blue-700" />
             <VStack>
-              <Heading size="sm">
-                {adminMaisRecente ?? "Comunicação"}
-              </Heading>
+              <Heading size="sm">{adminMaisRecente ?? "Comunicação"}</Heading>
               <Text className="text-[10px] text-gray-500">
                 {adminMaisRecente ? "Fábrica" : "Conversa deste agendamento"}
               </Text>
@@ -340,7 +338,6 @@ function formatHora(iso: string): string {
   try {
     return format(parseISO(iso), "dd/MM HH:mm");
   } catch {
- 
-   return "";
+    return "";
   }
 }

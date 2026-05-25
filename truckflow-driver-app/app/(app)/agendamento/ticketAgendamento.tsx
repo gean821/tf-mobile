@@ -25,7 +25,7 @@ import {
   QrCode,
   Truck,
 } from "lucide-react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, View } from "react-native";
 
 export default function TicketAgendamento() {
@@ -41,6 +41,10 @@ export default function TicketAgendamento() {
   const agendamentoSelecionado = meusAgendamentos.find(
     (a) => a.id === agendamentoId,
   );
+
+  useEffect(() => {
+    console.log(agendamentoSelecionado?.status);
+  });
 
   if (isLoading) {
     return (
@@ -270,17 +274,20 @@ export default function TicketAgendamento() {
               />
             )}
 
-          <Button
-            variant="outline"
-            action="primary"
-            onPress={() => setAvisarModalOpen(true)}
-            className="mt-2 rounded-xl border-white"
-          >
-            <Icon as={MessageSquare} className="text-white mr-2" />
-            <ButtonText className="text-white font-bold">
-              Avisar fábrica
-            </ButtonText>
-          </Button>
+          {agendamentoSelecionado.status !== "Finalizado" &&
+            agendamentoSelecionado.status !== "Expirado" && (
+              <Button
+                variant="outline"
+                action="primary"
+                onPress={() => setAvisarModalOpen(true)}
+                className="mt-2 rounded-xl border-white"
+              >
+                <Icon as={MessageSquare} className="text-white mr-2" />
+                <ButtonText className="text-white font-bold">
+                  Avisar fábrica
+                </ButtonText>
+              </Button>
+            )}
         </VStack>
       </ScrollView>
 

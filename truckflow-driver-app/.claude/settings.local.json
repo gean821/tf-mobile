@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/ESTUDO/TruckFlow/src/TruckFlowApi/**)",
+      "Read(//c/ESTUDO/TruckFlow/docs/**)"
+    ]
+  }
+}
