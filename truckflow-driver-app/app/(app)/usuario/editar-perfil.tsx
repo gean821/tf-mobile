@@ -2,10 +2,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import {
   ArrowLeft,
-  EyeIcon,
-  EyeOffIcon,
-  Lock,
-  Mail,
   Phone,
   User,
   UserCircle,
@@ -22,6 +18,7 @@ import { Input, InputField, InputIcon, InputSlot } from "@/components/ui/input";
 import { Pressable } from "@/components/ui/pressable";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
+
 import { toast } from "@/src/components/feedback/toast";
 import { motoristaQueryKey, useMotoristaProfileQuery } from "@/src/queries/motorista.queries";
 import { AuthService } from "@/src/services/AuthService";
@@ -33,17 +30,13 @@ export default function EditarPerfil() {
 
   const [nomeReal, setNomeReal] = useState("");
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
   const [telefone, setTelefone] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!profile) return;
     setNomeReal(profile.nomeReal ?? "");
     setUsername(profile.username ?? "");
-    setEmail(profile.email ?? "");
     setTelefone(profile.telefone ?? "");
   }, [profile]);
 
@@ -53,9 +46,7 @@ export default function EditarPerfil() {
       await AuthService.update({
         ...(nomeReal && { nomeReal }),
         ...(username && { username }),
-        ...(email && { email }),
         ...(telefone && { telefone }),
-        ...(password && { password }),
       });
 
       await queryClient.invalidateQueries({ queryKey: [motoristaQueryKey] });
@@ -149,28 +140,6 @@ export default function EditarPerfil() {
 
             <VStack space="xs">
               <Text size="sm" className="font-bold text-gray-600 ml-1">
-                Email
-              </Text>
-              <Input
-                variant="outline"
-                size="xl"
-                className="rounded-xl border-gray-200 bg-gray-50 h-12"
-              >
-                <InputSlot className="pl-3">
-                  <InputIcon as={Mail} className="text-gray-400" />
-                </InputSlot>
-                <InputField
-                  placeholder="seu@email.com"
-                  value={email}
-                  onChangeText={setEmail}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                />
-              </Input>
-            </VStack>
-
-            <VStack space="xs">
-              <Text size="sm" className="font-bold text-gray-600 ml-1">
                 Celular / WhatsApp
               </Text>
               <Input
@@ -187,36 +156,6 @@ export default function EditarPerfil() {
                   onChangeText={setTelefone}
                   keyboardType="phone-pad"
                 />
-              </Input>
-            </VStack>
-
-            <VStack space="xs">
-              <Text size="sm" className="font-bold text-gray-600 ml-1">
-                Nova Senha
-              </Text>
-              <Input
-                variant="outline"
-                size="xl"
-                className="rounded-xl border-gray-200 bg-gray-50 h-12"
-              >
-                <InputSlot className="pl-3">
-                  <InputIcon as={Lock} className="text-gray-400" />
-                </InputSlot>
-                <InputField
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  value={password}
-                  onChangeText={setPassword}
-                />
-                <InputSlot
-                  className="pr-3"
-                  onPress={() => setShowPassword(!showPassword)}
-                >
-                  <InputIcon
-                    as={showPassword ? EyeIcon : EyeOffIcon}
-                    className="text-gray-400"
-                  />
-                </InputSlot>
               </Input>
             </VStack>
 
