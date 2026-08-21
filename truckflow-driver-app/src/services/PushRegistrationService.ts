@@ -1,7 +1,19 @@
 import Constants from "expo-constants";
-import * as Device from "expo-device";
-import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
+
+let Notifications: typeof import("expo-notifications") | null = null;
+try {
+  Notifications = require("expo-notifications");
+} catch {
+  // Expo Go: módulo nativo não disponível
+}
+
+let Device: typeof import("expo-device") | null = null;
+try {
+  Device = require("expo-device");
+} catch {
+  // Expo Go: módulo nativo não disponível
+}
 import { PlataformaDispositivo } from "../enums/TipoNotificacao";
 import NotificacaoService from "./NotificacaoService";
 
@@ -14,8 +26,8 @@ import NotificacaoService from "./NotificacaoService";
  */
 export default class PushRegistrationService {
   static async ensureRegistered(): Promise<void> {
-    if (!Device.isDevice) {
-      console.info("[push] Não é device físico, skip registro.");
+    if (!Notifications || !Device?.isDevice) {
+      console.info("[push] Push não disponível (Expo Go ou não é device físico), skip registro.");
       return;
     }
 
@@ -44,17 +56,19 @@ export default class PushRegistrationService {
   }
 
   private static async requestPermission(): Promise<boolean> {
+    if (!Notifications) return false;
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    
+
     if (existingStatus === "granted") {
       return true;
-    } 
+    }
 
     const { status } = await Notifications.requestPermissionsAsync();
     return status === "granted";
   }
 
   private static async fetchExpoToken(): Promise<string | null> {
+    if (!Notifications) return null;
     const projectId =
       Constants.expoConfig?.extra?.eas?.projectId ??
       Constants.easConfig?.projectId;
