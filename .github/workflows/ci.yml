@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - master
+
+  push:
+    branches:
+      - develop
+      - master
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # O .npmrc com legacy-peer-deps=true e rastreado, entao vem no checkout.
+      - name: Install
+        run: npm ci
+
+      # O Metro usa Babel, que remove as anotacoes de tipo sem validar nada.
+      # Sem este passo, erro de tipo passa direto para producao.
+      - name: Type check
+        run: npx tsc --noEmit
+
+      # Roda o Metro e gera o bundle real. E o equivalente ao build aqui e nao
+      # consome token nem cota do EAS. O Expo avisa sobre o google-services.json
+      # ausente (gitignorado) mas nao falha: o bundle e gerado normalmente.
+      - name: Bundle (expo export)
+        run: npx expo export --platform android --output-dir dist-ci
