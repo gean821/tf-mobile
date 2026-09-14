@@ -27,5 +27,3 @@ yarn-error.log
 google-services.json
 *-firebase-adminsdk-*.json
 
-# Lock duplicado fora do projeto
-../package-lock.json
