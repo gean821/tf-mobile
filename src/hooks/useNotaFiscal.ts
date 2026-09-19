@@ -46,18 +46,30 @@ export const useNotaFiscal = () => {
     });
 
     const buscarNotaPorChaveMutation = useMutation({
-        mutationFn: NotaFiscalService.buscarNotaPorChave,
+        mutationFn: async (chaveAcesso: string) => {
+            try {
+                return await NotaFiscalService.buscarNotaPorChave(chaveAcesso);
+            } catch (error: any) {
+                if (error.response?.status !== 404) {
+                    throw error;
+                }
+                return await NotaFiscalService.buscarNotaCompletaSefaz(chaveAcesso);
+            }
+        },
         onSuccess: (data) => {
             console.log("RETORNO DO SAVE >>>", JSON.stringify(data, null, 2));
             setNotaStore(data);
             toast.success("Nota encontrada", "Seguindo para a conferência.");
         },
         onError: (error: any) => {
-            if (error.response?.status === 404) {
+            if (error.response?.status === 400) {
+                const mensagem = error.response?.data?.message
+                    ?? "Não foi possível localizar essa nota fiscal.";
+
                 toast.show({
                     variant: "warning",
-                    title: "Nota não encontrada",
-                    description: "Esta nota não foi encontrada no sistema.",
+                    title: "Nota não localizada",
+                    description: mensagem,
                     duration: 6000,
                     action: {
                         label: "Tentar outra forma",

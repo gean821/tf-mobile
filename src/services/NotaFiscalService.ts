@@ -41,4 +41,9 @@ export default class NotaFiscalService {
         const { data } = await http.get(`/NotaFiscal/buscar-por-chave/${chaveAcesso}`);
         return data;
     }
+
+    static async buscarNotaCompletaSefaz(chaveAcesso: string): Promise<INotaFiscalParsedDto> {
+        const { data } = await http.get(`/NotaFiscal/buscar-completa-sefaz/${chaveAcesso}`);
+        return data;
+    }
 }
