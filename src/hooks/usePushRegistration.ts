@@ -56,7 +56,7 @@ export function usePushRegistration() {
         if (data?.agendamentoId) {
           router.push({
             pathname: "/(app)/agendamento/ticketAgendamento",
-            params: { id: data.agendamentoId },
+            params: { agendamentoId: data.agendamentoId },
           });
           return;
         }
