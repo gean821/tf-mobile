@@ -52,7 +52,9 @@ export function AlterarSenhaModal({ visible, onClose }: Props) {
     setErro(null);
     setLoading(true);
     try {
-      await AuthService.enviarCodigo({ finalidade: FinalidadeVerificacaoEmail.AlterarSenha });
+      await AuthService.enviarCodigo({
+        finalidade: FinalidadeVerificacaoEmail.AlterarSenha,
+      });
       setStep(2);
     } catch {
       setErro("Não foi possível enviar o código. Tente novamente.");
@@ -94,7 +96,11 @@ export function AlterarSenhaModal({ visible, onClose }: Props) {
     setErro(null);
     setLoading(true);
     try {
-      await AuthService.alterarSenha({ codigoToken, novaSenha, confirmarSenha });
+      await AuthService.alterarSenha({
+        codigoToken,
+        novaSenha,
+        confirmarSenha,
+      });
       handleClose();
     } catch {
       setErro("Não foi possível alterar a senha. Tente novamente.");
@@ -104,20 +110,30 @@ export function AlterarSenhaModal({ visible, onClose }: Props) {
   }
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={handleClose}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="slide"
+      onRequestClose={handleClose}
+    >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1, justifyContent: "flex-end" }}
       >
         <View style={{ backgroundColor: "rgba(0,0,0,0.4)", flex: 1 }} />
         <View className="bg-white rounded-t-3xl overflow-hidden">
-          {/* Header */}
-          <View className="bg-[#195FA0] px-5 py-4 flex-row items-center justify-between">
+          <View className="bg-primary-500 px-5 py-4 flex-row items-center justify-between">
             <HStack space="sm" className="items-center">
               <Icon as={Lock} size="sm" className="text-white" />
-              <Text className="text-white font-bold text-base">Alterar Senha</Text>
+              <Text className="text-white font-bold text-base">
+                Alterar Senha
+              </Text>
             </HStack>
-            <Pressable onPress={handleClose}>
+            <Pressable
+              onPress={handleClose}
+              accessibilityLabel="Fechar"
+              accessibilityRole="button"
+            >
               <Icon as={X} size="sm" className="text-white" />
             </Pressable>
           </View>
@@ -128,7 +144,7 @@ export function AlterarSenhaModal({ visible, onClose }: Props) {
               {([1, 2, 3] as Step[]).map((s) => (
                 <View
                   key={s}
-                  className={`h-2 rounded-full ${step >= s ? "bg-[#195FA0]" : "bg-gray-200"}`}
+                  className={`h-2 rounded-full ${step >= s ? "bg-primary-500" : "bg-gray-200"}`}
                   style={{ width: step >= s ? 24 : 16 }}
                 />
               ))}
@@ -137,13 +153,18 @@ export function AlterarSenhaModal({ visible, onClose }: Props) {
             {step === 1 && (
               <VStack space="md">
                 <Text className="text-gray-700 text-sm text-center">
-                  Enviaremos um código de verificação para o e-mail cadastrado na sua conta.
+                  Enviaremos um código de verificação para o e-mail cadastrado
+                  na sua conta.
                 </Text>
-                {erro && <Text className="text-red-500 text-xs text-center">{erro}</Text>}
+                {erro && (
+                  <Text className="text-red-500 text-xs text-center">
+                    {erro}
+                  </Text>
+                )}
                 <Pressable
                   onPress={handleEnviarCodigo}
                   disabled={loading}
-                  className="bg-[#195FA0] rounded-xl py-3.5 items-center active:opacity-80"
+                  className="bg-primary-500 rounded-xl py-3.5 items-center active:opacity-80"
                 >
                   {loading ? (
                     <ActivityIndicator color="#fff" size="small" />
@@ -170,16 +191,22 @@ export function AlterarSenhaModal({ visible, onClose }: Props) {
                     style={{ fontSize: 24, letterSpacing: 8 }}
                   />
                 </Input>
-                {erro && <Text className="text-red-500 text-xs text-center">{erro}</Text>}
+                {erro && (
+                  <Text className="text-red-500 text-xs text-center">
+                    {erro}
+                  </Text>
+                )}
                 <Pressable
                   onPress={handleVerificarCodigo}
                   disabled={loading}
-                  className="bg-[#195FA0] rounded-xl py-3.5 items-center active:opacity-80"
+                  className="bg-primary-500 rounded-xl py-3.5 items-center active:opacity-80"
                 >
                   {loading ? (
                     <ActivityIndicator color="#fff" size="small" />
                   ) : (
-                    <Text className="text-white font-bold">Verificar Código</Text>
+                    <Text className="text-white font-bold">
+                      Verificar Código
+                    </Text>
                   )}
                 </Pressable>
               </VStack>
@@ -194,8 +221,14 @@ export function AlterarSenhaModal({ visible, onClose }: Props) {
                     onChangeText={setNovaSenha}
                     secureTextEntry={!showNova}
                   />
-                  <InputSlot className="pr-3" onPress={() => setShowNova((v) => !v)}>
-                    <InputIcon as={showNova ? EyeIcon : EyeOffIcon} className="text-gray-400" />
+                  <InputSlot
+                    className="pr-3"
+                    onPress={() => setShowNova((v) => !v)}
+                  >
+                    <InputIcon
+                      as={showNova ? EyeIcon : EyeOffIcon}
+                      className="text-gray-400"
+                    />
                   </InputSlot>
                 </Input>
                 <Input variant="outline" size="lg">
@@ -205,20 +238,32 @@ export function AlterarSenhaModal({ visible, onClose }: Props) {
                     onChangeText={setConfirmarSenha}
                     secureTextEntry={!showConfirmar}
                   />
-                  <InputSlot className="pr-3" onPress={() => setShowConfirmar((v) => !v)}>
-                    <InputIcon as={showConfirmar ? EyeIcon : EyeOffIcon} className="text-gray-400" />
+                  <InputSlot
+                    className="pr-3"
+                    onPress={() => setShowConfirmar((v) => !v)}
+                  >
+                    <InputIcon
+                      as={showConfirmar ? EyeIcon : EyeOffIcon}
+                      className="text-gray-400"
+                    />
                   </InputSlot>
                 </Input>
-                {erro && <Text className="text-red-500 text-xs text-center">{erro}</Text>}
+                {erro && (
+                  <Text className="text-red-500 text-xs text-center">
+                    {erro}
+                  </Text>
+                )}
                 <Pressable
                   onPress={handleAlterarSenha}
                   disabled={loading}
-                  className="bg-[#195FA0] rounded-xl py-3.5 items-center active:opacity-80"
+                  className="bg-primary-500 rounded-xl py-3.5 items-center active:opacity-80"
                 >
                   {loading ? (
                     <ActivityIndicator color="#fff" size="small" />
                   ) : (
-                    <Text className="text-white font-bold">Confirmar Nova Senha</Text>
+                    <Text className="text-white font-bold">
+                      Confirmar Nova Senha
+                    </Text>
                   )}
                 </Pressable>
               </VStack>

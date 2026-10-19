@@ -6,6 +6,7 @@ import { Pressable } from "@/components/ui/pressable";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import { useProduto } from "@/src/hooks/useProduto";
+import { PRIMARY_500 } from "@/src/constants/colors";
 import { Package, Search, X } from "lucide-react-native";
 import { useState } from "react";
 import { ActivityIndicator, FlatList, View } from 'react-native';
@@ -36,7 +37,11 @@ export const ProdutoSelectModal = ({
             <ModalContent className="bg-white h-[80%] w-[95%] rounded-2xl">
                 <ModalHeader className="border-b border-gray-100 p-4 flex-row justify-between items-center">
                     <Heading size="md">Selecionar Produto</Heading>
-                    <Pressable onPress={onClose}>
+                    <Pressable
+                        onPress={onClose}
+                        accessibilityLabel="Fechar"
+                        accessibilityRole="button"
+                    >
                         <Icon as={X} className="text-gray-400" />
                     </Pressable>
                 </ModalHeader>
@@ -55,7 +60,7 @@ export const ProdutoSelectModal = ({
                     </VStack>
 
                     {isLoadingProdutos ? (
-                        <ActivityIndicator className="mt-10" color="#195FA0" />
+                        <ActivityIndicator className="mt-10" color={PRIMARY_500} />
                     ) : (
                         <FlatList<IProduto>
                             data={filteredProducts}

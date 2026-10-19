@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
 import { toast } from "../components/feedback/toast";
 import type { EnviarParaEmpresaDto } from "../Dtos/Notificacao/EnviarParaEmpresaDto";
 import {
@@ -26,6 +27,17 @@ export const useNotificacao = () => {
     },
   });
 
+  const markAllAsReadMutation = useMutation({
+    mutationFn: async () => await NotificacaoService.markAllAsRead(),
+    onSuccess: () => invalidate(),
+    onError: (error: AxiosError<{ message?: string }>) => {
+      const msg =
+        error.response?.data?.message ||
+        "Falha ao marcar notificações como lidas.";
+      toast.error("Erro", msg);
+    },
+  });
+
   const enviarParaEmpresaMutation = useMutation({
     mutationFn: async (dto: EnviarParaEmpresaDto) => await NotificacaoService.enviarParaEmpresa(dto),
     onSuccess: () => {
@@ -41,6 +53,8 @@ export const useNotificacao = () => {
   return {
     markAsRead: markAsReadMutation.mutateAsync,
     isMarkingAsRead: markAsReadMutation.isPending,
+    markAllAsRead: markAllAsReadMutation.mutateAsync,
+    isMarkingAllAsRead: markAllAsReadMutation.isPending,
     enviarParaEmpresa: enviarParaEmpresaMutation.mutateAsync,
     isEnviando: enviarParaEmpresaMutation.isPending,
   };

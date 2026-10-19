@@ -44,7 +44,7 @@ export default function TicketAgendamento() {
 
   if (isLoading) {
     return (
-      <Center className="flex-1 bg-[#195FA0]">
+      <Center className="flex-1 bg-primary-500">
         <ActivityIndicator size="large" color="#fff" />
         <Text className="text-blue-100 text-xs mt-3">Carregando ticket...</Text>
       </Center>
@@ -53,7 +53,7 @@ export default function TicketAgendamento() {
 
   if (!agendamentoSelecionado) {
     return (
-      <Center className="flex-1 bg-[#195FA0] px-8">
+      <Center className="flex-1 bg-primary-500 px-8">
         <View className="bg-white/15 p-5 rounded-full mb-4">
           <Icon as={FileText} className="text-white" size="xl" />
         </View>
@@ -67,7 +67,7 @@ export default function TicketAgendamento() {
           onPress={() => router.replace("/(app)/home")}
           className="bg-white rounded-xl"
         >
-          <ButtonText className="text-[#195FA0] font-bold">
+          <ButtonText className="text-primary-500 font-bold">
             Voltar ao início
           </ButtonText>
         </Button>
@@ -102,7 +102,7 @@ export default function TicketAgendamento() {
   const ticketId = agendamentoSelecionado.id.split("-")[0].toUpperCase();
 
   return (
-    <View className="flex-1 bg-[#195FA0]">
+    <View className="flex-1 bg-primary-500">
       <ScrollView
         contentContainerStyle={{ paddingBottom: 40, flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
@@ -151,7 +151,7 @@ export default function TicketAgendamento() {
                 <Text className="text-xs text-gray-400 font-bold uppercase">
                   Horário
                 </Text>
-                <Text className="text-[#195FA0] font-black text-3xl">
+                <Text className="text-primary-500 font-black text-3xl">
                   {hora}
                 </Text>
               </VStack>
@@ -162,7 +162,7 @@ export default function TicketAgendamento() {
               className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm items-center"
             >
               <View className="bg-blue-50 p-3 rounded-lg">
-                <Icon as={MapPin} className="text-[#195FA0]" />
+                <Icon as={MapPin} className="text-primary-500" />
               </View>
               <VStack className="flex-1">
                 <Text className="text-xs text-gray-400 font-bold">
@@ -254,10 +254,10 @@ export default function TicketAgendamento() {
             className="bg-white rounded-xl shadow-lg"
             onPress={() => router.replace("/(app)/home")}
           >
-            <ButtonText className="text-[#195FA0] font-bold">
+            <ButtonText className="text-primary-500 font-bold">
               Voltar ao Início
             </ButtonText>
-            <Icon as={Home} className="text-[#195FA0] ml-2" />
+            <Icon as={Home} className="text-primary-500 ml-2" />
           </Button>
 
           {agendamentoSelecionado.latitude != null &&

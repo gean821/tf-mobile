@@ -1,31 +1,26 @@
-import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
-import '@/global.css';
-import { ToastBridge, ToastProvider } from '@/src/components/feedback/toast';
-import { usePushRegistration } from '@/src/hooks/usePushRegistration';
-import { useAuthStore } from '@/src/stores/useAuthStore';
+import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
+import "@/global.css";
+import { ToastBridge, ToastProvider } from "@/src/components/feedback/toast";
+import { PRIMARY_500 } from "@/src/constants/colors";
+import { usePushRegistration } from "@/src/hooks/usePushRegistration";
+import { useAuthStore } from "@/src/stores/useAuthStore";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Slot, useRouter, useSegments } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import { ActivityIndicator, View } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import 'react-native-reanimated';
+import { Slot, useRouter, useSegments } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
+import { ActivityIndicator, View } from "react-native";
+import "react-native-reanimated";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import "../global.css";
 
 const client = new QueryClient();
 
-
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary
-} from 'expo-router';
+export { ErrorBoundary } from "expo-router";
 
 export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(app)',
+  initialRouteName: "(app)",
 };
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 function InitialLayout() {
@@ -35,29 +30,31 @@ function InitialLayout() {
 
   usePushRegistration();
 
-  // 1. Carrega a sessão ao iniciar
   useEffect(() => {
     loadSession();
   }, []);
 
-  // 2. Proteção de Rotas (O "Guarda")
   useEffect(() => {
     if (isLoading) return;
 
-    const inAuthGroup = (segments[0] as string) === "(auth)";    
-    // Se NÃO tem token e NÃO está na área de auth -> Manda pro Login
+    const inAuthGroup = (segments[0] as string) === "(auth)";
     if (!token && !inAuthGroup) {
-      router.replace('/(auth)/login'); 
-    } 
-    // Se TEM token e está na área de auth (tentando logar de novo) -> Manda pra Home
-    else if (token && inAuthGroup) {
-      router.replace("/(app)/home"); // Manda para a pasta (app)
+      router.replace("/(auth)/login");
+    } else if (token && inAuthGroup) {
+      router.replace("/(app)/home");
     }
   }, [token, isLoading, segments]);
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#195FA0' }}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: PRIMARY_500,
+        }}
+      >
         <ActivityIndicator size="large" color="#fff" />
       </View>
     );
@@ -80,4 +77,3 @@ export default function RootLayout() {
     </SafeAreaProvider>
   );
 }
-

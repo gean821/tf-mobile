@@ -197,7 +197,7 @@ export default function ConferenciaNota() {
 
       <View className="p-4 bg-white border-t border-gray-100 absolute bottom-0 w-full">
         <Button
-          className="bg-[#195FA0] h-12 rounded-xl"
+          className="bg-primary-500 h-12 rounded-xl"
           onPress={handleConfirmar}
           isDisabled={isSaving}
         >

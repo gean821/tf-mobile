@@ -52,7 +52,12 @@ export const TipoVeiculoSelectModal = ({ isOpen, onClose, onSelect, selectedType
                                     <Text className="text-xl font-bold text-gray-800">Tipo de Veículo</Text>
                                     <Text className="text-xs text-gray-500">Selecione a carroceria utilizada</Text>
                                 </View>
-                                <Pressable onPress={onClose} className="bg-gray-100 p-2 rounded-full">
+                                <Pressable
+                                    onPress={onClose}
+                                    className="bg-gray-100 p-2 rounded-full"
+                                    accessibilityLabel="Fechar"
+                                    accessibilityRole="button"
+                                >
                                     <Icon as={X} size="sm" className="text-gray-500" />
                                 </Pressable>
                             </View>
@@ -66,7 +71,7 @@ export const TipoVeiculoSelectModal = ({ isOpen, onClose, onSelect, selectedType
                                             key={key}
                                             onPress={() => handleSelect(key)}
                                             className={`flex-row items-center justify-between p-4 mb-3 rounded-xl border ${isSelected
-                                                    ? 'bg-blue-50 border-[#195FA0]'
+                                                    ? 'bg-blue-50 border-primary-500'
                                                     : 'bg-white border-gray-100'
                                                 }`}
                                         >
@@ -75,16 +80,16 @@ export const TipoVeiculoSelectModal = ({ isOpen, onClose, onSelect, selectedType
                                                     <Icon
                                                         as={Truck}
                                                         size="sm"
-                                                        className={isSelected ? 'text-[#195FA0]' : 'text-gray-400'}
+                                                        className={isSelected ? 'text-primary-500' : 'text-gray-400'}
                                                     />
                                                 </View>
-                                                <Text className={`text-base ${isSelected ? 'font-bold text-[#195FA0]' : 'font-medium text-gray-700'}`}>
+                                                <Text className={`text-base ${isSelected ? 'font-bold text-primary-500' : 'font-medium text-gray-700'}`}>
                                                     {TipoVeiculoLabels[key]}
                                                 </Text>
                                             </View>
 
                                             {isSelected && (
-                                                <Icon as={Check} size="sm" className="text-[#195FA0]" />
+                                                <Icon as={Check} size="sm" className="text-primary-500" />
                                             )}
                                         </Pressable>
                                     );

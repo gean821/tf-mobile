@@ -3,6 +3,7 @@ import { Icon } from "@/components/ui/icon";
 import { Pressable } from "@/components/ui/pressable";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
+import { PRIMARY_500 } from "@/src/constants/colors";
 import { ChevronRight } from "lucide-react-native";
 import { ActivityIndicator, View } from "react-native";
 
@@ -37,7 +38,7 @@ export const OptionCard = ({
         isInactive ? "opacity-60" : ""
       }`}
       style={{
-        shadowColor: isPrimary ? "#195FA0" : "#0f172a",
+        shadowColor: isPrimary ? PRIMARY_500 : "#0f172a",
         shadowOffset: { width: 0, height: isPrimary ? 10 : 3 },
         shadowOpacity: isPrimary ? 0.18 : 0.06,
         shadowRadius: isPrimary ? 16 : 8,
@@ -47,7 +48,7 @@ export const OptionCard = ({
       <View
         className={`p-5 border ${
           isPrimary
-            ? "bg-[#195FA0] border-[#195FA0]"
+            ? "bg-primary-500 border-primary-500"
             : "bg-white border-gray-100"
         }`}
       >
@@ -60,7 +61,7 @@ export const OptionCard = ({
             <Icon
               as={IconComp}
               size="lg"
-              className={isPrimary ? "text-white" : "text-[#195FA0]"}
+              className={isPrimary ? "text-white" : "text-primary-500"}
             />
           </View>
 
@@ -81,7 +82,7 @@ export const OptionCard = ({
                 >
                   <Text
                     className={`text-[10px] font-bold ${
-                      isPrimary ? "text-white" : "text-[#195FA0]"
+                      isPrimary ? "text-white" : "text-primary-500"
                     }`}
                   >
                     {badge}
@@ -102,7 +103,7 @@ export const OptionCard = ({
           </VStack>
 
           {loading ? (
-            <ActivityIndicator color={isPrimary ? "#fff" : "#195FA0"} />
+            <ActivityIndicator color={isPrimary ? "#fff" : PRIMARY_500} />
           ) : (
             <View
               className={`p-1.5 rounded-full ${

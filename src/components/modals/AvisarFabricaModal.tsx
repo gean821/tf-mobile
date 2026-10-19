@@ -15,6 +15,7 @@ import type { NotificacaoListItemDto } from "@/src/Dtos/Notificacao/NotificacaoL
 import { TipoNotificacao } from "@/src/enums/TipoNotificacao";
 import { useNotificacao } from "@/src/hooks/useNotificacao";
 import { useComunicacaoAgendamentoQuery } from "@/src/queries/notificacao.queries";
+import { PRIMARY_500 } from "@/src/constants/colors";
 import { format, parseISO } from "date-fns";
 import { MessageSquare, Send, X } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
@@ -146,7 +147,11 @@ export function AvisarFabricaModal({
               </Text>
             </VStack>
           </HStack>
-          <Pressable onPress={onClose}>
+          <Pressable
+            onPress={onClose}
+            accessibilityLabel="Fechar"
+            accessibilityRole="button"
+          >
             <Icon as={X} className="text-gray-400" />
           </Pressable>
         </ModalHeader>
@@ -155,7 +160,7 @@ export function AvisarFabricaModal({
           <View className="flex-1 bg-[#fafbfc]">
             {isLoading && items.length === 0 ? (
               <View className="flex-1 items-center justify-center py-10">
-                <ActivityIndicator size="small" color="#195FA0" />
+                <ActivityIndicator size="small" color={PRIMARY_500} />
               </View>
             ) : items.length === 0 ? (
               <VStack className="flex-1 items-center justify-center py-10 px-6">
@@ -207,7 +212,7 @@ export function AvisarFabricaModal({
               onPress={handleSubmit}
               disabled={!canSubmit}
               className={`h-11 w-11 rounded-full items-center justify-center ${
-                canSubmit ? "bg-[#195FA0]" : "bg-gray-300"
+                canSubmit ? "bg-primary-500" : "bg-gray-300"
               }`}
             >
               {isEnviando ? (

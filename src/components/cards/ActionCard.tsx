@@ -20,7 +20,7 @@ const COLOR_STYLES: Record<
   blue: {
     bg: "bg-white",
     iconBg: "bg-blue-50",
-    iconColor: "text-[#195FA0]",
+    iconColor: "text-primary-500",
     ring: "border-blue-100/70",
   },
   orange: {
@@ -80,7 +80,9 @@ export const ActionCard = ({
         />
       </View>
       <View className="mt-auto">
-        <Text className="font-bold text-gray-800 text-sm">{title}</Text>
+        <Text className="font-bold text-gray-800 text-sm" numberOfLines={1}>
+          {title}
+        </Text>
         {subtitle ? (
           <Text className="text-gray-400 text-[11px] mt-0.5" numberOfLines={1}>
             {subtitle}

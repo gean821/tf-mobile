@@ -106,12 +106,16 @@ export function AlterarEmailModal({ visible, onClose }: Props) {
         <View style={{ backgroundColor: "rgba(0,0,0,0.4)", flex: 1 }} />
         <View className="bg-white rounded-t-3xl overflow-hidden">
           {/* Header */}
-          <View className="bg-[#195FA0] px-5 py-4 flex-row items-center justify-between">
+          <View className="bg-primary-500 px-5 py-4 flex-row items-center justify-between">
             <HStack space="sm" className="items-center">
               <Icon as={Mail} size="sm" className="text-white" />
               <Text className="text-white font-bold text-base">Alterar E-mail</Text>
             </HStack>
-            <Pressable onPress={handleClose}>
+            <Pressable
+              onPress={handleClose}
+              accessibilityLabel="Fechar"
+              accessibilityRole="button"
+            >
               <Icon as={X} size="sm" className="text-white" />
             </Pressable>
           </View>
@@ -122,7 +126,7 @@ export function AlterarEmailModal({ visible, onClose }: Props) {
               {([1, 2, 3] as Step[]).map((s) => (
                 <View
                   key={s}
-                  className={`h-2 rounded-full ${step >= s ? "bg-[#195FA0]" : "bg-gray-200"}`}
+                  className={`h-2 rounded-full ${step >= s ? "bg-primary-500" : "bg-gray-200"}`}
                   style={{ width: step >= s ? 24 : 16 }}
                 />
               ))}
@@ -137,7 +141,7 @@ export function AlterarEmailModal({ visible, onClose }: Props) {
                 <Pressable
                   onPress={handleEnviarCodigo}
                   disabled={loading}
-                  className="bg-[#195FA0] rounded-xl py-3.5 items-center active:opacity-80"
+                  className="bg-primary-500 rounded-xl py-3.5 items-center active:opacity-80"
                 >
                   {loading ? (
                     <ActivityIndicator color="#fff" size="small" />
@@ -168,7 +172,7 @@ export function AlterarEmailModal({ visible, onClose }: Props) {
                 <Pressable
                   onPress={handleVerificarCodigo}
                   disabled={loading}
-                  className="bg-[#195FA0] rounded-xl py-3.5 items-center active:opacity-80"
+                  className="bg-primary-500 rounded-xl py-3.5 items-center active:opacity-80"
                 >
                   {loading ? (
                     <ActivityIndicator color="#fff" size="small" />
@@ -197,7 +201,7 @@ export function AlterarEmailModal({ visible, onClose }: Props) {
                 <Pressable
                   onPress={handleAlterarEmail}
                   disabled={loading}
-                  className="bg-[#195FA0] rounded-xl py-3.5 items-center active:opacity-80"
+                  className="bg-primary-500 rounded-xl py-3.5 items-center active:opacity-80"
                 >
                   {loading ? (
                     <ActivityIndicator color="#fff" size="small" />

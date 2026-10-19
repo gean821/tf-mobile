@@ -8,7 +8,7 @@ import { toast } from "@/src/components/feedback/toast";
 import IAgendamentoResponseDto from "@/src/Dtos/Agendamento/IAgendamentoResponseDto";
 import { useAgendamento } from "@/src/hooks/useAgendamento";
 import { useVagasDisponiveisQuery } from "@/src/queries/agendamento.queries";
-import { useAuthStore } from "@/src/stores/useAuthStore";
+import { PRIMARY_500 } from "@/src/constants/colors";
 import { useNotaFiscalStore } from "@/src/stores/useNotaFiscalStore";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -46,7 +46,6 @@ export default function Horarios() {
   const router = useRouter();
   const nota = useNotaFiscalStore((state) => state.notaEmConferencia);
   const { placaVeiculo, tipoVeiculo } = useNotaFiscalStore();
-  useAuthStore();
 
   const [agendamentoSelecionado, setAgendamentoSelecionado] =
     useState<IAgendamentoResponseDto | null>(null);
@@ -124,7 +123,7 @@ export default function Horarios() {
 
   return (
     <View className="flex-1 bg-slate-50">
-      <View className="bg-[#195FA0] pt-12 pb-8 px-5 rounded-b-[32px] overflow-hidden relative">
+      <View className="bg-primary-500 pt-12 pb-8 px-5 rounded-b-[32px] overflow-hidden relative">
         <View
           className="absolute -top-12 -right-10 w-44 h-44 rounded-full bg-white/5"
           pointerEvents="none"
@@ -198,7 +197,7 @@ export default function Horarios() {
                   onPress={() => setFiltroPeriodo(p.key)}
                   className={`px-4 py-2 rounded-full border ${
                     isActive
-                      ? "bg-[#195FA0] border-[#195FA0]"
+                      ? "bg-primary-500 border-primary-500"
                       : "bg-white border-gray-200"
                   } active:opacity-80`}
                 >
@@ -222,7 +221,7 @@ export default function Horarios() {
       >
         {isLoading ? (
           <View className="items-center mt-16">
-            <ActivityIndicator size="large" color="#195FA0" />
+            <ActivityIndicator size="large" color={PRIMARY_500} />
             <Text className="text-gray-400 text-xs mt-3">
               Buscando horários disponíveis...
             </Text>
@@ -230,7 +229,7 @@ export default function Horarios() {
         ) : agendamentosFiltrados.length === 0 ? (
           <View className="items-center mt-16 px-6">
             <View className="bg-blue-50 p-5 rounded-full mb-4">
-              <Icon as={CalendarX2} className="text-[#195FA0]" size="xl" />
+              <Icon as={CalendarX2} className="text-primary-500" size="xl" />
             </View>
             <Text className="text-gray-800 font-bold text-base text-center">
               Nenhum horário disponível
@@ -253,13 +252,13 @@ export default function Horarios() {
                   onPress={() => setAgendamentoSelecionado(vaga)}
                   className={`rounded-2xl border overflow-hidden ${
                     isSelected
-                      ? "bg-white border-[#195FA0] border-2"
+                      ? "bg-white border-primary-500 border-2"
                       : "bg-white border-gray-100"
                   } active:opacity-90`}
                   style={
                     isSelected
                       ? {
-                          shadowColor: "#195FA0",
+                          shadowColor: PRIMARY_500,
                           shadowOffset: { width: 0, height: 6 },
                           shadowOpacity: 0.18,
                           shadowRadius: 12,
@@ -277,17 +276,17 @@ export default function Horarios() {
                   <HStack className="p-4 items-center">
                     <View
                       className={`w-16 h-16 rounded-2xl items-center justify-center mr-4 ${
-                        isSelected ? "bg-[#195FA0]" : "bg-blue-50"
+                        isSelected ? "bg-primary-500" : "bg-blue-50"
                       }`}
                     >
                       <Icon
                         as={Clock}
-                        className={isSelected ? "text-white" : "text-[#195FA0]"}
+                        className={isSelected ? "text-white" : "text-primary-500"}
                         size="xs"
                       />
                       <Text
                         className={`font-bold text-base mt-0.5 ${
-                          isSelected ? "text-white" : "text-[#195FA0]"
+                          isSelected ? "text-white" : "text-primary-500"
                         }`}
                       >
                         {format(horario, "HH:mm")}
@@ -319,7 +318,7 @@ export default function Horarios() {
                     </View>
 
                     {isSelected ? (
-                      <View className="bg-[#195FA0] p-1.5 rounded-full">
+                      <View className="bg-primary-500 p-1.5 rounded-full">
                         <Icon as={CheckCircle2} color="white" size="sm" />
                       </View>
                     ) : (
@@ -354,7 +353,7 @@ export default function Horarios() {
                 Horário selecionado
               </Text>
               <HStack className="items-center mt-1" space="xs">
-                <Icon as={Clock} className="text-[#195FA0]" size="xs" />
+                <Icon as={Clock} className="text-primary-500" size="xs" />
                 <Text className="text-gray-900 font-bold text-base">
                   {format(
                     parseISO(agendamentoSelecionado.horarioInicio),
@@ -373,11 +372,11 @@ export default function Horarios() {
           </HStack>
 
           <Button
-            className="bg-[#195FA0] h-12 rounded-2xl"
+            className="bg-primary-500 h-12 rounded-2xl"
             onPress={handleConfirmar}
             isDisabled={isReserving}
             style={{
-              shadowColor: "#195FA0",
+              shadowColor: PRIMARY_500,
               shadowOffset: { width: 0, height: 6 },
               shadowOpacity: 0.3,
               shadowRadius: 10,

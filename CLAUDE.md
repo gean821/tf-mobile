@@ -59,6 +59,12 @@ Alias `@` = raiz do repo (`@/src/...`, `@/components/ui/...`).
 - Tap na notificação roteia pelo payload (`isPushPayloadData`) para o ticket do agendamento ou a lista de notificações
 - Push remoto exige dev build em device físico (não Expo Go)
 
+## Notificações (tela + sino)
+
+- Sino do navbar (`src/components/navs/navbar.tsx`): badge real via `useNotificacoesUnreadCountQuery()` — some com 0, mostra número, cap em "9+".
+- Tela `app/(app)/notificacoes/notificacao.tsx`: `SectionList` agrupada por "Hoje/Ontem/Esta semana/Mais antigas" (por `criadaEm`), chips de filtro local (Todas/Não lidas/Mensagens/Agendamentos) sobre os itens da página atual, botão "Marcar todas como lidas" no header (`useNotificacao().markAllAsRead` → `POST /notifications/mark-all-read`).
+- Subtítulo com contexto do agendamento (`unidadeEntregaNome`, `localDescargaNome`, `dataAgendamentoIso` dentro de `payloadJson`) é **opcional** — notificação sem esses campos (payload antigo ou tipo sem agendamento) simplesmente não mostra a linha, nunca erro.
+
 ## Variáveis de ambiente
 
 `.env` (git-ignored; modelo em `.env.example`):

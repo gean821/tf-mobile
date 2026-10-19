@@ -11,6 +11,17 @@ import {
 } from "@/src/enums/TipoNotificacao";
 import { useNotificacao } from "@/src/hooks/useNotificacao";
 import { useNotificacoesPagedQuery } from "@/src/queries/notificacao.queries";
+import { PRIMARY_500 } from "@/src/constants/colors";
+import {
+  format,
+  differenceInCalendarDays,
+  isToday,
+  isTomorrow,
+  isValid,
+  isYesterday,
+  parseISO,
+} from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { useRouter } from "expo-router";
 import {
   Bell,
@@ -22,23 +33,59 @@ import {
   Clock,
   MessageSquare,
 } from "lucide-react-native";
-import { useState } from "react";
-import { ActivityIndicator, FlatList, RefreshControl, View } from "react-native";
+import { useMemo, useState } from "react";
+import {
+  ActivityIndicator,
+  RefreshControl,
+  SectionList,
+  View,
+} from "react-native";
 
-interface PayloadComAgendamento {
+interface NotificacaoPayloadExtra {
   agendamentoId?: string;
+  unidadeEntregaNome?: string;
+  localDescargaNome?: string;
+  dataAgendamentoIso?: string;
+  empresaNome?: string;
 }
 
-function tentaLerAgendamentoId(payloadJson: string): string | null {
+interface NotificacaoSecao {
+  title: string;
+  data: NotificacaoListItemDto[];
+}
+
+type FiltroChave = "todas" | "naoLidas" | "mensagens" | "agendamentos";
+
+const CHIPS: { chave: FiltroChave; label: string }[] = [
+  { chave: "todas", label: "Todas" },
+  { chave: "naoLidas", label: "Não lidas" },
+  { chave: "mensagens", label: "Mensagens" },
+  { chave: "agendamentos", label: "Agendamentos" },
+];
+
+const TIPOS_MENSAGEM = new Set<TipoNotificacao>([
+  TipoNotificacao.MensagemManualAdmin,
+  TipoNotificacao.MensagemManualMotorista,
+]);
+
+const TIPOS_AGENDAMENTO = new Set<TipoNotificacao>([
+  TipoNotificacao.AgendamentoCriado,
+  TipoNotificacao.AgendamentoConfirmado,
+  TipoNotificacao.AgendamentoCancelado,
+  TipoNotificacao.AgendamentoReagendado,
+  TipoNotificacao.AgendamentoExpirado,
+  TipoNotificacao.MotoristaChegou,
+  TipoNotificacao.JanelaPropxima,
+]);
+
+function parsePayload(payloadJson: string): NotificacaoPayloadExtra {
   try {
     const parsed: unknown = JSON.parse(payloadJson);
-
     if (typeof parsed === "object" && parsed !== null) {
-      const obj = parsed as PayloadComAgendamento;
-      return typeof obj.agendamentoId === "string" ? obj.agendamentoId : null;
+      return parsed as NotificacaoPayloadExtra;
     }
   } catch {}
-  return null;
+  return {};
 }
 
 function iconeParaTipo(tipo: TipoNotificacao) {
@@ -72,7 +119,7 @@ function corParaPrioridade(p: PrioridadeNotificacao): string {
     return "#d97706";
   }
 
-  return "#195FA0";
+  return PRIMARY_500;
 }
 
 function tempoRelativo(iso: string): string {
@@ -100,16 +147,144 @@ function tempoRelativo(iso: string): string {
   return `${Math.floor(h / 24)}d`;
 }
 
+function formatarDataAgendamento(iso: string): string | null {
+  try {
+    const data = parseISO(iso);
+
+    if (!isValid(data)) {
+      return null;
+    }
+
+    const hora = format(data, "HH:mm");
+
+    if (isToday(data)) {
+      return `hoje às ${hora}`;
+    }
+
+    if (isYesterday(data)) {
+      return `ontem às ${hora}`;
+    }
+
+    if (isTomorrow(data)) {
+      return `amanhã às ${hora}`;
+    }
+
+    return `${format(data, "dd/MM", { locale: ptBR })} às ${hora}`;
+  } catch {
+    return null;
+  }
+}
+
+function montarSubtitulo(payload: NotificacaoPayloadExtra): string | null {
+  const partes: string[] = [];
+
+  if (
+    typeof payload.empresaNome === "string" &&
+    payload.empresaNome.trim() !== ""
+  ) {
+    partes.push(payload.empresaNome.trim());
+  }
+
+  if (
+    typeof payload.unidadeEntregaNome === "string" &&
+    payload.unidadeEntregaNome.trim() !== ""
+  ) {
+    partes.push(`Unidade ${payload.unidadeEntregaNome.trim()}`);
+  }
+
+  if (
+    typeof payload.localDescargaNome === "string" &&
+    payload.localDescargaNome.trim() !== ""
+  ) {
+    partes.push(payload.localDescargaNome.trim());
+  }
+
+  if (typeof payload.dataAgendamentoIso === "string") {
+    const dataFormatada = formatarDataAgendamento(payload.dataAgendamentoIso);
+    if (dataFormatada) {
+      partes.push(dataFormatada);
+    }
+  }
+
+  return partes.length > 0 ? partes.join(" · ") : null;
+}
+
+function aplicaFiltro(
+  items: NotificacaoListItemDto[],
+  filtro: FiltroChave,
+): NotificacaoListItemDto[] {
+  switch (filtro) {
+    case "naoLidas":
+      return items.filter((i) => !i.lidaEm);
+    case "mensagens":
+      return items.filter((i) => TIPOS_MENSAGEM.has(i.tipo));
+    case "agendamentos":
+      return items.filter((i) => TIPOS_AGENDAMENTO.has(i.tipo));
+    default:
+      return items;
+  }
+}
+
+function agruparPorPeriodo(
+  items: NotificacaoListItemDto[],
+): NotificacaoSecao[] {
+  const grupos: Record<string, NotificacaoListItemDto[]> = {
+    Hoje: [],
+    Ontem: [],
+    "Esta semana": [],
+    "Mais antigas": [],
+  };
+
+  const agora = new Date();
+
+  for (const item of items) {
+    const data = parseISO(item.criadaEm);
+
+    if (!isValid(data)) {
+      grupos["Mais antigas"].push(item);
+      continue;
+    }
+
+    if (isToday(data)) {
+      grupos["Hoje"].push(item);
+    } else if (isYesterday(data)) {
+      grupos["Ontem"].push(item);
+    } else if (differenceInCalendarDays(agora, data) < 7) {
+      grupos["Esta semana"].push(item);
+    } else {
+      grupos["Mais antigas"].push(item);
+    }
+  }
+
+  return Object.entries(grupos)
+    .filter(([, data]) => data.length > 0)
+    .map(([title, data]) => ({ title, data }));
+}
+
 export default function NotificacoesScreen() {
   const router = useRouter();
   const [pageNumber, setPageNumber] = useState(1);
+  const [filtro, setFiltro] = useState<FiltroChave>("todas");
 
   const { data, isLoading, isRefetching, refetch } = useNotificacoesPagedQuery({
     pageNumber,
     pageSize: 20,
   });
 
-  const { markAsRead } = useNotificacao();
+  const { markAsRead, markAllAsRead, isMarkingAllAsRead } = useNotificacao();
+
+  const items = data?.items ?? [];
+  const hasMore = data ? pageNumber < data.totalPages : false;
+
+  const itemsFiltrados = useMemo(
+    () => aplicaFiltro(items, filtro),
+    [items, filtro],
+  );
+
+  const secoes = useMemo(
+    () => agruparPorPeriodo(itemsFiltrados),
+    [itemsFiltrados],
+  );
 
   async function onPressItem(item: NotificacaoListItemDto) {
     if (!item.lidaEm) {
@@ -118,7 +293,9 @@ export default function NotificacoesScreen() {
       } catch {}
     }
 
-    const agendamentoId = tentaLerAgendamentoId(item.payloadJson);
+    const payload = parsePayload(item.payloadJson);
+    const agendamentoId =
+      typeof payload.agendamentoId === "string" ? payload.agendamentoId : null;
 
     if (agendamentoId) {
       router.push({
@@ -128,10 +305,18 @@ export default function NotificacoesScreen() {
     }
   }
 
+  async function onPressMarcarTodasComoLidas() {
+    try {
+      await markAllAsRead();
+    } catch {}
+  }
+
   function renderItem({ item }: { item: NotificacaoListItemDto }) {
     const IconCmp = iconeParaTipo(item.tipo);
     const cor = corParaPrioridade(item.prioridade);
     const naoLida = !item.lidaEm;
+    const payload = parsePayload(item.payloadJson);
+    const subtitulo = montarSubtitulo(payload);
 
     return (
       <Pressable onPress={() => onPressItem(item)}>
@@ -167,33 +352,96 @@ export default function NotificacoesScreen() {
             <Text className="text-sm text-gray-600" numberOfLines={2}>
               {item.corpo}
             </Text>
+            {subtitulo && (
+              <Text className="text-xs text-gray-500" numberOfLines={1}>
+                {subtitulo}
+              </Text>
+            )}
           </VStack>
         </HStack>
       </Pressable>
     );
   }
 
-  const items = data?.items ?? [];
-  const hasMore = data ? pageNumber < data.totalPages : false;
+  function renderSectionHeader({ section }: { section: NotificacaoSecao }) {
+    return (
+      <View
+        style={{
+          backgroundColor: "#f9fafb",
+          paddingHorizontal: 16,
+          paddingVertical: 6,
+          borderBottomWidth: 1,
+          borderBottomColor: "#f3f4f6",
+        }}
+      >
+        <Text className="text-xs font-bold text-gray-500 uppercase">
+          {section.title}
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <Box className="flex-1 bg-white">
       <View
         style={{
-          backgroundColor: "#195FA0",
+          backgroundColor: PRIMARY_500,
           paddingTop: 60,
           paddingBottom: 16,
           paddingHorizontal: 16,
         }}
       >
-        <Text className="text-white text-xl font-bold">Notificações</Text>
+        <HStack className="items-center justify-between">
+          <Text className="text-white text-xl font-bold">Notificações</Text>
+          <Pressable
+            onPress={onPressMarcarTodasComoLidas}
+            disabled={isMarkingAllAsRead}
+            accessibilityRole="button"
+            accessibilityLabel="Marcar todas como lidas"
+          >
+            <Text className="text-white text-xs font-semibold underline">
+              {isMarkingAllAsRead ? "Marcando..." : "Marcar todas como lidas"}
+            </Text>
+          </Pressable>
+        </HStack>
+      </View>
+
+      <View
+        style={{
+          flexDirection: "row",
+          flexWrap: "wrap",
+          paddingHorizontal: 12,
+          paddingVertical: 12,
+          gap: 8,
+        }}
+      >
+        {CHIPS.map((chip) => {
+          const ativo = filtro === chip.chave;
+          return (
+            <Pressable
+              key={chip.chave}
+              onPress={() => setFiltro(chip.chave)}
+              className={`px-4 py-2 rounded-full ${
+                ativo ? "bg-primary-500" : "bg-white border border-gray-300"
+              }`}
+            >
+              <Text
+                className={`text-xs font-semibold ${
+                  ativo ? "text-white" : "text-gray-600"
+                }`}
+              >
+                {chip.label}
+              </Text>
+            </Pressable>
+          );
+        })}
       </View>
 
       {isLoading ? (
         <View
           style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
         >
-          <ActivityIndicator size="large" color="#195FA0" />
+          <ActivityIndicator size="large" color={PRIMARY_500} />
         </View>
       ) : items.length === 0 ? (
         <VStack className="flex-1 items-center justify-center px-8" space="md">
@@ -202,17 +450,26 @@ export default function NotificacoesScreen() {
             Nenhuma notificação ainda.
           </Text>
         </VStack>
+      ) : itemsFiltrados.length === 0 ? (
+        <VStack className="flex-1 items-center justify-center px-8" space="md">
+          <Icon as={Bell} size="xl" style={{ color: "#9ca3af" }} />
+          <Text className="text-gray-500 text-center">
+            Nenhuma notificação neste filtro.
+          </Text>
+        </VStack>
       ) : (
-        <FlatList
-          data={items}
+        <SectionList
+          sections={secoes}
           keyExtractor={(it) => it.id}
           renderItem={renderItem}
+          renderSectionHeader={renderSectionHeader}
+          stickySectionHeadersEnabled
           refreshControl={
             <RefreshControl
               refreshing={isRefetching}
               onRefresh={() => refetch()}
-              colors={["#195FA0"]}
-              tintColor="#195FA0"
+              colors={[PRIMARY_500]}
+              tintColor={PRIMARY_500}
             />
           }
           onEndReachedThreshold={0.3}

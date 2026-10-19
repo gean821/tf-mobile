@@ -1,6 +1,6 @@
 import { toast } from "@/src/components/feedback/toast";
 import { useState } from "react";
-import { Image, ScrollView, View } from "react-native";
+import { Image, KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
 
 import { Box } from "@/components/ui/box";
 import { Button, ButtonSpinner, ButtonText } from "@/components/ui/button";
@@ -64,8 +64,12 @@ export default function Login() {
   };
 
   return (
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
     <Box className="flex-1 bg-gray-50">
-      <View className="bg-[#195FA0] pt-16 pb-12 px-6 rounded-b-[40px] items-center shadow-lg">
+      <View className="bg-primary-500 pt-16 pb-12 px-6 rounded-b-[40px] items-center shadow-lg">
         <Image
           source={require("../../assets/images/logo.png")}
           style={{ width: 120, height: 120, tintColor: "white" }}
@@ -83,6 +87,7 @@ export default function Login() {
         className="flex-1 px-6 -mt-8"
         contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
         <Box className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
           <VStack space="xl">
@@ -94,7 +99,7 @@ export default function Login() {
               <Input
                 variant="outline"
                 size="xl"
-                className="rounded-xl border-gray-200 bg-gray-50 focus:border-[#195FA0] h-12"
+                className="rounded-xl border-gray-200 bg-gray-50 focus:border-primary-500 h-12"
               >
                 <InputSlot className="pl-3">
                   <InputIcon as={UserCircle} className="text-gray-400" />
@@ -115,7 +120,7 @@ export default function Login() {
               <Input
                 variant="outline"
                 size="xl"
-                className="rounded-xl border-gray-200 bg-gray-50 focus:border-[#195FA0] h-12"
+                className="rounded-xl border-gray-200 bg-gray-50 focus:border-primary-500 h-12"
               >
                 <InputSlot className="pl-3">
                   <InputIcon as={Lock} className="text-gray-400" />
@@ -140,7 +145,7 @@ export default function Login() {
 
             <Button
               size="xl"
-              className="bg-[#195FA0] rounded-xl h-14 shadow-md shadow-blue-200 mt-2"
+              className="bg-primary-500 rounded-xl h-14 shadow-md shadow-blue-200 mt-2"
               onPress={handleLogin}
               isDisabled={isLoading}
             >
@@ -175,16 +180,17 @@ export default function Login() {
           <Button
             variant="outline"
             size="md"
-            className="border-[#195FA0] rounded-full px-6"
+            className="border-primary-500 rounded-full px-6"
             onPress={() => router.push("/(auth)/register")}
             isDisabled={isLoading}
           >
-            <ButtonText className="text-[#195FA0] font-bold">
+            <ButtonText className="text-primary-500 font-bold">
               Criar conta agora
             </ButtonText>
           </Button>
         </VStack>
       </ScrollView>
     </Box>
+    </KeyboardAvoidingView>
   );
 }

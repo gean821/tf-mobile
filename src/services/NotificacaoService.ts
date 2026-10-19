@@ -25,6 +25,10 @@ export default class NotificacaoService {
     await http.patch(`/notifications/${id}/read`);
   }
 
+  static async markAllAsRead(): Promise<void> {
+    await http.post("/notifications/mark-all-read");
+  }
+
   static async listarPorAgendamento(
     agendamentoId: string
   ): Promise<NotificacaoListItemDto[]> {

@@ -16,6 +16,7 @@ import { Pressable } from "@/components/ui/pressable";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import { ActionCard } from "@/src/components/cards/ActionCard";
+import { PRIMARY_500 } from "@/src/constants/colors";
 import { useAuthStore } from "@/src/stores/useAuthStore";
 
 const getGreeting = () => {
@@ -33,16 +34,17 @@ const getGreeting = () => {
 
 export default function Home() {
   const router = useRouter();
-  const store = useAuthStore();
-  const driverName = store.user?.unique_name ?? "Motorista";
+  const userName = useAuthStore((s) => s.user?.unique_name);
+  const signOut = useAuthStore((s) => s.signOut);
+  const driverName = userName ?? "Motorista";
 
   const greeting = useMemo(() => getGreeting(), []);
 
   const firstName = driverName.split(" ")[0];
 
   const handleLogOut = () => {
-    store.signOut();
-    router.push("/(auth)/login");
+    signOut();
+    router.replace("/(auth)/login");
   };
 
   return (
@@ -50,7 +52,7 @@ export default function Home() {
       className="flex-1 bg-slate-50"
       showsVerticalScrollIndicator={false}
     >
-      <View className="bg-[#195FA0] pt-6 pb-24 px-6 rounded-b-[36px] overflow-hidden relative">
+      <View className="bg-primary-500 pt-6 pb-24 px-6 rounded-b-[36px] overflow-hidden relative">
         <View
           className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/5"
           pointerEvents="none"
@@ -81,7 +83,7 @@ export default function Home() {
           onPress={() => router.push("/agendamento/agendar")}
           className="active:scale-[0.98]"
           style={{
-            shadowColor: "#195FA0",
+            shadowColor: PRIMARY_500,
             shadowOffset: { width: 0, height: 12 },
             shadowOpacity: 0.18,
             shadowRadius: 20,
@@ -100,9 +102,9 @@ export default function Home() {
 
             <HStack className="justify-between items-start mb-5">
               <View
-                className="bg-[#195FA0] p-3.5 rounded-2xl"
+                className="bg-primary-500 p-3.5 rounded-2xl"
                 style={{
-                  shadowColor: "#195FA0",
+                  shadowColor: PRIMARY_500,
                   shadowOffset: { width: 0, height: 6 },
                   shadowOpacity: 0.3,
                   shadowRadius: 8,
@@ -128,10 +130,10 @@ export default function Home() {
             </Text>
 
             <HStack className="mt-5 items-center justify-between pt-4 border-t border-gray-100">
-              <Text className="text-[#195FA0] font-semibold text-sm">
+              <Text className="text-primary-500 font-semibold text-sm">
                 Começar agora
               </Text>
-              <View className="bg-[#195FA0] p-1.5 rounded-full">
+              <View className="bg-primary-500 p-1.5 rounded-full">
                 <Icon as={ChevronRight} color="white" size="sm" />
               </View>
             </HStack>

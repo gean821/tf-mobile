@@ -1,4 +1,5 @@
 import { Icon } from "@/components/ui/icon";
+import { PRIMARY_500 } from "@/src/constants/colors";
 import {
   AlertTriangle,
   CheckCircle2,
@@ -75,8 +76,8 @@ const VARIANT_CONFIG: Record<
   },
   info: {
     icon: Info,
-    iconColor: "#195FA0",
-    accent: "#195FA0",
+    iconColor: PRIMARY_500,
+    accent: PRIMARY_500,
     iconBg: "#dbeafe",
     titleColor: "#0c3a6e",
   },
@@ -152,58 +153,60 @@ function ToastCard({
           if (!toast.action) hide();
         }}
         style={({ pressed }) => [
-          styles.toast,
+          styles.shadowWrap,
           {
             opacity: pressed && !toast.action ? 0.92 : 1,
           },
         ]}
       >
-        <View style={[styles.accent, { backgroundColor: config.accent }]} />
+        <View style={styles.toast}>
+          <View style={[styles.accent, { backgroundColor: config.accent }]} />
 
-        <View style={styles.content}>
-          <View style={[styles.iconBox, { backgroundColor: config.iconBg }]}>
-            <Icon as={config.icon} size="md" color={config.iconColor} />
-          </View>
+          <View style={styles.content}>
+            <View style={[styles.iconBox, { backgroundColor: config.iconBg }]}>
+              <Icon as={config.icon} size="md" color={config.iconColor} />
+            </View>
 
-          <View style={styles.textBox}>
-            <Text style={[styles.title, { color: config.titleColor }]}>
-              {toast.title}
-            </Text>
-            {toast.description ? (
-              <Text style={styles.description} numberOfLines={3}>
-                {toast.description}
+            <View style={styles.textBox}>
+              <Text style={[styles.title, { color: config.titleColor }]}>
+                {toast.title}
               </Text>
-            ) : null}
+              {toast.description ? (
+                <Text style={styles.description} numberOfLines={3}>
+                  {toast.description}
+                </Text>
+              ) : null}
 
-            {toast.action ? (
-              <Pressable
-                onPress={() => {
-                  toast.action?.onPress();
-                  hide();
-                }}
-                style={({ pressed }) => [
-                  styles.actionButton,
-                  {
-                    backgroundColor: config.accent,
-                    opacity: pressed ? 0.85 : 1,
-                  },
-                ]}
-              >
-                <Text style={styles.actionLabel}>{toast.action.label}</Text>
-              </Pressable>
-            ) : null}
+              {toast.action ? (
+                <Pressable
+                  onPress={() => {
+                    toast.action?.onPress();
+                    hide();
+                  }}
+                  style={({ pressed }) => [
+                    styles.actionButton,
+                    {
+                      backgroundColor: config.accent,
+                      opacity: pressed ? 0.85 : 1,
+                    },
+                  ]}
+                >
+                  <Text style={styles.actionLabel}>{toast.action.label}</Text>
+                </Pressable>
+              ) : null}
+            </View>
+
+            <Pressable
+              onPress={hide}
+              hitSlop={10}
+              style={({ pressed }) => [
+                styles.closeBtn,
+                { opacity: pressed ? 0.5 : 1 },
+              ]}
+            >
+              <Icon as={X} size="xs" color="#94a3b8" />
+            </Pressable>
           </View>
-
-          <Pressable
-            onPress={hide}
-            hitSlop={10}
-            style={({ pressed }) => [
-              styles.closeBtn,
-              { opacity: pressed ? 0.5 : 1 },
-            ]}
-          >
-            <Icon as={X} size="xs" color="#94a3b8" />
-          </Pressable>
         </View>
       </Pressable>
     </Animated.View>
@@ -303,16 +306,25 @@ const styles = StyleSheet.create({
   toastWrapper: {
     marginTop: 8,
   },
-  toast: {
+  // View externa: dona da sombra/elevation. Precisa de background opaco e
+  // SEM overflow:hidden — no Android, elevation + overflow:hidden no mesmo
+  // View é uma combinação conhecida por quebrar o compositing da sombra e
+  // deixar o fundo com aparência translúcida.
+  shadowWrap: {
     backgroundColor: "#ffffff",
     borderRadius: 16,
-    flexDirection: "row",
-    overflow: "hidden",
     shadowColor: "#0f172a",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.18,
     shadowRadius: 20,
     elevation: 12,
+  },
+  // View interna: só recorta os cantos da barra de accent. Sem elevation.
+  toast: {
+    backgroundColor: "#ffffff",
+    borderRadius: 16,
+    flexDirection: "row",
+    overflow: "hidden",
     borderWidth: 1,
     borderColor: "#f1f5f9",
   },

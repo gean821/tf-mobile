@@ -61,7 +61,7 @@ export default function EditarPerfil() {
 
   return (
     <Box className="flex-1 bg-gray-50">
-      <View className="bg-[#195FA0] pt-6 pb-10 px-6 rounded-b-[40px] relative overflow-hidden">
+      <View className="bg-primary-500 pt-6 pb-10 px-6 rounded-b-[40px] relative overflow-hidden">
         <View
           className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/5"
           pointerEvents="none"
@@ -162,7 +162,7 @@ export default function EditarPerfil() {
             <VStack space="md" className="mt-2">
               <Button
                 size="xl"
-                className="bg-[#195FA0] rounded-xl h-14 shadow-md shadow-blue-200"
+                className="bg-primary-500 rounded-xl h-14 shadow-md shadow-blue-200"
                 onPress={handleSave}
                 isDisabled={isLoading}
               >

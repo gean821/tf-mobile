@@ -66,7 +66,12 @@ export const KeyInputModal = ({
                 <ModalContent className="bg-white rounded-2xl w-[90%] max-w-[400px]">
                     <ModalHeader className="flex-row justify-between items-center p-4 border-b border-gray-100">
                         <Heading size="md" className="text-gray-800">Digitar Chave</Heading>
-                        <Pressable onPress={onClose} disabled={isLoading}>
+                        <Pressable
+                            onPress={onClose}
+                            disabled={isLoading}
+                            accessibilityLabel="Fechar"
+                            accessibilityRole="button"
+                        >
                             <Icon as={X} className="text-gray-400" />
                         </Pressable>
                     </ModalHeader>
@@ -90,8 +95,8 @@ export const KeyInputModal = ({
 
                         <Pressable onPress={handlePaste} className="self-end py-2">
                             <HStack space="xs" className="items-center">
-                                <Icon as={IconClipboard} size="xs" className="text-[#195FA0]" />
-                                <Text className="text-[#195FA0] font-bold text-xs">Colar da área de transferência</Text>
+                                <Icon as={IconClipboard} size="xs" className="text-primary-500" />
+                                <Text className="text-primary-500 font-bold text-xs">Colar da área de transferência</Text>
                             </HStack>
                         </Pressable>
                     </ModalBody>
@@ -110,7 +115,7 @@ export const KeyInputModal = ({
 
                         <Button
                             size="md"
-                            className="bg-[#195FA0]"
+                            className="bg-primary-500"
                             onPress={handleConfirm}
                             isDisabled={isLoading}
                         >

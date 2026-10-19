@@ -95,7 +95,7 @@ export default function Agendar() {
         contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >
-        <View className="bg-[#195FA0] pt-12 pb-12 px-5 rounded-b-[32px] overflow-hidden relative">
+        <View className="bg-primary-500 pt-12 pb-12 px-5 rounded-b-[32px] overflow-hidden relative">
           <View
             className="absolute -top-12 -right-10 w-44 h-44 rounded-full bg-white/5"
             pointerEvents="none"
@@ -152,7 +152,7 @@ export default function Agendar() {
                 </Text>
               </View>
               <View className="bg-blue-50 px-2.5 py-1 rounded-full">
-                <Text className="text-[#195FA0] text-[10px] font-bold">
+                <Text className="text-primary-500 text-[10px] font-bold">
                   3 opções
                 </Text>
               </View>

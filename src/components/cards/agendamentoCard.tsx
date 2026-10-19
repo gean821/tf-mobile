@@ -133,12 +133,12 @@ export const AgendamentoCard = ({ data, isHistory, onPress }: CardProps) => {
       {!isHistory && (
         <View className="flex-row items-center justify-between mt-3 pt-3 border-t border-dashed border-gray-200">
           <View className="flex-row items-center">
-            <Icon as={QrCode} size="xs" className="text-[#195FA0] mr-1.5" />
-            <Text className="text-[#195FA0] text-xs font-bold">
+            <Icon as={QrCode} size="xs" className="text-primary-500 mr-1.5" />
+            <Text className="text-primary-500 text-xs font-bold">
               Ver ticket para apresentar
             </Text>
           </View>
-          <Icon as={ChevronRight} size="sm" className="text-[#195FA0]" />
+          <Icon as={ChevronRight} size="sm" className="text-primary-500" />
         </View>
       )}
     </Pressable>
