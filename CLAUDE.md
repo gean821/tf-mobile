@@ -90,7 +90,7 @@ Decisão por ADR-0003 do backend + `docs/adr/0002-captura-localizacao.md` deste 
 - Zustand sempre com seletor (`useAuthStore(s => s.token)`); dado de servidor fica no React Query.
 - Toast imperativo: `toast.success/error(titulo, descricao?)` de `src/components/feedback/toast.tsx`.
 - Componentes funcionais + hooks.
-- Agentes e skills do projeto ficam no repo da API: `C:\ESTUDO\TruckFlow\.claude\` (`mobile-expo-specialist`, `typescript-pro`...).
+- Agentes e skills do projeto ficam no repo da API: `C:\ESTUDO\TruckFlow\.claude\` (`mobile-expo-specialist`, `typescript-pro`...). Para valerem aqui, rodar uma vez `.claude\setup-agents.ps1` do repo da API (junções em `~/.claude`).
 
 ## Manter este arquivo vivo
 
