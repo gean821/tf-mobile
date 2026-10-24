@@ -1,3 +1,4 @@
+import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
 import { create } from "zustand";
@@ -5,6 +6,21 @@ import RefreshMobileResponseDto from "../Dtos/auth/RefreshMobileResponseDto";
 import JwtPayload from "../Entities/JwtPayload";
 
 export const REFRESH_TOKEN_KEY = "tf_refresh";
+export const ACCESS_TOKEN_KEY = "tf_access";
+
+export function isSessaoRecusada(error: unknown): boolean {
+  if (error instanceof Error && error.message === "no_refresh_token") {
+    return true;
+  }
+
+  return axios.isAxiosError(error) && error.response?.status === 401;
+}
+
+function salvarAccessToken(token: string) {
+  SecureStore.setItemAsync(ACCESS_TOKEN_KEY, token).catch((error) =>
+    console.error("Erro ao salvar access token", error)
+  );
+}
 
 interface AuthState {
   token: string | null;
@@ -39,6 +55,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         );
       }
 
+      salvarAccessToken(token);
+
       set({
         token,
         refreshToken: refreshToken ?? null,
@@ -53,6 +71,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   setAccess: (token, tokenExpiresAt) => {
     try {
       const decoded = jwtDecode<JwtPayload>(token);
+      salvarAccessToken(token);
       set({ token, tokenExpiresAt, user: decoded });
     } catch (error) {
       console.error("Erro ao decodificar access token", error);
@@ -76,6 +95,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
 
     await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
+    await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY);
     set({ token: null, refreshToken: null, tokenExpiresAt: null, user: null });
   },
 
@@ -99,6 +119,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
         const decoded = jwtDecode<JwtPayload>(data.token);
         await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, data.refreshToken);
+        salvarAccessToken(data.token);
 
         set({
           token: data.token,
@@ -106,9 +127,20 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           tokenExpiresAt: data.tokenExpiresAt,
           user: decoded,
         });
-      } catch {
-        await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
-        set({ token: null, refreshToken: null, tokenExpiresAt: null, user: null });
+      } catch (error) {
+        if (isSessaoRecusada(error)) {
+          await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
+          await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY);
+          set({ token: null, refreshToken: null, tokenExpiresAt: null, user: null });
+          return;
+        }
+
+        console.warn("[auth] refresh indisponível (sem rede?); mantendo a sessão salva", error);
+
+        const ultimoAccess = await SecureStore.getItemAsync(ACCESS_TOKEN_KEY);
+        if (ultimoAccess) {
+          set({ token: ultimoAccess, user: jwtDecode<JwtPayload>(ultimoAccess) });
+        }
       }
     } catch (error) {
       console.error("Erro ao restaurar sessão", error);

@@ -1,4 +1,4 @@
-import { useAuthStore, REFRESH_TOKEN_KEY } from "@/src/stores/useAuthStore";
+import { useAuthStore, REFRESH_TOKEN_KEY, isSessaoRecusada } from "@/src/stores/useAuthStore";
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
@@ -101,8 +101,10 @@ http.interceptors.response.use(
       original.headers["Authorization"] = `Bearer ${refreshed.token}`;
       return http(original);
     } catch (refreshError) {
-      await useAuthStore.getState().signOut();
-      router.replace("/(auth)/login");
+      if (isSessaoRecusada(refreshError)) {
+        await useAuthStore.getState().signOut();
+        router.replace("/(auth)/login");
+      }
       return Promise.reject(refreshError);
     }
   },
