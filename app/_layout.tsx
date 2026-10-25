@@ -1,8 +1,10 @@
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
 import "@/global.css";
+import { AtualizacaoObrigatoria } from "@/src/components/feedback/AtualizacaoObrigatoria";
 import { ToastBridge, ToastProvider } from "@/src/components/feedback/toast";
 import { PRIMARY_500 } from "@/src/constants/colors";
 import { usePushRegistration } from "@/src/hooks/usePushRegistration";
+import { useVersaoMinima } from "@/src/hooks/useVersaoMinima";
 import { useAuthStore } from "@/src/stores/useAuthStore";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Slot, useRouter, useSegments } from "expo-router";
@@ -29,13 +31,14 @@ function InitialLayout() {
   const router = useRouter();
 
   usePushRegistration();
+  const { atualizacaoObrigatoria, urlLoja } = useVersaoMinima();
 
   useEffect(() => {
     loadSession();
   }, []);
 
   useEffect(() => {
-    if (isLoading) return;
+    if (isLoading || atualizacaoObrigatoria) return;
 
     const inAuthGroup = (segments[0] as string) === "(auth)";
     if (!token && !inAuthGroup) {
@@ -43,7 +46,11 @@ function InitialLayout() {
     } else if (token && inAuthGroup) {
       router.replace("/(app)/home");
     }
-  }, [token, isLoading, segments]);
+  }, [token, isLoading, segments, atualizacaoObrigatoria]);
+
+  if (atualizacaoObrigatoria) {
+    return <AtualizacaoObrigatoria urlLoja={urlLoja} />;
+  }
 
   if (isLoading) {
     return (
