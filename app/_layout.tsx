@@ -6,6 +6,7 @@ import { PRIMARY_500 } from "@/src/constants/colors";
 import { usePushRegistration } from "@/src/hooks/usePushRegistration";
 import { useVersaoMinima } from "@/src/hooks/useVersaoMinima";
 import { useAuthStore } from "@/src/stores/useAuthStore";
+import * as Sentry from "@sentry/react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Slot, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -16,6 +17,26 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import "../global.css";
 
 const client = new QueryClient();
+
+const sentryDsn = process.env.EXPO_PUBLIC_SENTRY_DSN;
+const CHAVE_NFE = /\d{44}/g;
+
+Sentry.init({
+  dsn: sentryDsn,
+  enabled: !!sentryDsn && !__DEV__,
+  environment: process.env.EXPO_PUBLIC_APP_ENV ?? "production",
+  sendDefaultPii: false,
+  tracesSampleRate: 0,
+  beforeBreadcrumb(breadcrumb) {
+    if (typeof breadcrumb.data?.url === "string") {
+      breadcrumb.data.url = breadcrumb.data.url.replace(CHAVE_NFE, "[chave-nfe]");
+    }
+    if (breadcrumb.message) {
+      breadcrumb.message = breadcrumb.message.replace(CHAVE_NFE, "[chave-nfe]");
+    }
+    return breadcrumb;
+  },
+});
 
 export { ErrorBoundary } from "expo-router";
 
@@ -70,7 +91,7 @@ function InitialLayout() {
   return <Slot />;
 }
 
-export default function RootLayout() {
+function RootLayout() {
   return (
     <SafeAreaProvider>
       <GluestackUIProvider mode="light">
@@ -84,3 +105,5 @@ export default function RootLayout() {
     </SafeAreaProvider>
   );
 }
+
+export default Sentry.wrap(RootLayout);
