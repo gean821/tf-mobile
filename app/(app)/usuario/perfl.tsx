@@ -1,7 +1,7 @@
 import { useFocusEffect, useRouter } from "expo-router";
 import { ChevronRight, Edit3, Lock, LogOut, Mail, Phone, Shield, User } from "lucide-react-native";
 import { useCallback, useState } from "react";
-import { ActivityIndicator, ScrollView, View } from "react-native";
+import { ActivityIndicator, Alert, ScrollView, View } from "react-native";
 
 import { HStack } from "@/components/ui/hstack";
 import { Icon } from "@/components/ui/icon";
@@ -11,6 +11,7 @@ import { VStack } from "@/components/ui/vstack";
 import { AlterarEmailModal } from "@/src/components/modals/AlterarEmailModal";
 import { AlterarSenhaModal } from "@/src/components/modals/AlterarSenhaModal";
 import { useMotoristaProfileQuery } from "@/src/queries/motorista.queries";
+import { AuthService } from "@/src/services/AuthService";
 import { PRIMARY_500 } from "@/src/constants/colors";
 import { useAuthStore } from "@/src/stores/useAuthStore";
 
@@ -75,6 +76,33 @@ export default function Perfil() {
   const handleLogOut = async () => {
     await signOut();
     router.replace("/(auth)/login");
+  };
+
+  const [excluindo, setExcluindo] = useState(false);
+
+  const excluirConta = async () => {
+    setExcluindo(true);
+    try {
+      await AuthService.delete();
+      await signOut();
+      router.replace("/(auth)/login");
+      Alert.alert("Conta excluída", "Seus dados pessoais foram removidos do TruckFlow.");
+    } catch {
+      Alert.alert("Não foi possível excluir", "Verifique sua conexão e tente novamente.");
+    } finally {
+      setExcluindo(false);
+    }
+  };
+
+  const confirmarExclusao = () => {
+    Alert.alert(
+      "Excluir minha conta",
+      "Seu nome, telefone, e-mail e veículos serão apagados e você não poderá mais entrar com esta conta. Agendamentos e notas fiscais já registrados ficam com a fábrica por obrigação legal. Essa ação não pode ser desfeita.",
+      [
+        { text: "Cancelar", style: "cancel" },
+        { text: "Excluir", style: "destructive", onPress: excluirConta },
+      ],
+    );
   };
 
   return (
@@ -165,6 +193,14 @@ export default function Perfil() {
               <Icon as={LogOut} color="#ef4444" size="md" />
               <Text className="text-red-500 font-semibold text-base ml-2">Sair da Conta</Text>
             </View>
+          </Pressable>
+
+          <Pressable onPress={confirmarExclusao} disabled={excluindo} className="items-center py-2">
+            {excluindo ? (
+              <ActivityIndicator size="small" color="#ef4444" />
+            ) : (
+              <Text className="text-gray-400 text-sm underline">Excluir minha conta</Text>
+            )}
           </Pressable>
         </VStack>
       </ScrollView>
