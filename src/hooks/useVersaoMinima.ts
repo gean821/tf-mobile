@@ -1,8 +1,6 @@
 import Constants from "expo-constants";
-import { useEffect, useState } from "react";
 import { Platform } from "react-native";
-import VersaoMinimaResponseDto from "../Dtos/app/VersaoMinimaResponseDto";
-import http from "../services/http/axios";
+import { useVersaoMinimaQuery } from "../queries/app.queries";
 
 export function versaoMenorQue(atual: string, minima: string): boolean {
   const a = atual.split(".").map((p) => parseInt(p, 10) || 0);
@@ -19,26 +17,17 @@ export function versaoMenorQue(atual: string, minima: string): boolean {
 }
 
 export function useVersaoMinima() {
-  const [atualizacaoObrigatoria, setAtualizacaoObrigatoria] = useState(false);
-  const [urlLoja, setUrlLoja] = useState<string | null>(null);
+  const versaoAtual = Constants.expoConfig?.version;
+  const { data } = useVersaoMinimaQuery(!!versaoAtual && Platform.OS !== "web");
 
-  useEffect(() => {
-    const versaoAtual = Constants.expoConfig?.version;
-    if (!versaoAtual || Platform.OS === "web") {
-      return;
-    }
+  if (!data || !versaoAtual) {
+    return { atualizacaoObrigatoria: false, urlLoja: null };
+  }
 
-    http
-      .get<VersaoMinimaResponseDto>("/app/versao-minima", { timeout: 8000 })
-      .then(({ data }) => {
-        const minima = Platform.OS === "ios" ? data.ios : data.android;
-        setUrlLoja((Platform.OS === "ios" ? data.urlLojaIos : data.urlLojaAndroid) ?? null);
-        setAtualizacaoObrigatoria(versaoMenorQue(versaoAtual, minima));
-      })
-      .catch(() => {
-        console.warn("[versao] não foi possível checar a versão mínima; seguindo sem bloquear");
-      });
-  }, []);
+  const ios = Platform.OS === "ios";
 
-  return { atualizacaoObrigatoria, urlLoja };
+  return {
+    atualizacaoObrigatoria: versaoMenorQue(versaoAtual, ios ? data.ios : data.android),
+    urlLoja: (ios ? data.urlLojaIos : data.urlLojaAndroid) ?? null,
+  };
 }

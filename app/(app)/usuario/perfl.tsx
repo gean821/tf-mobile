@@ -1,7 +1,7 @@
 import { useFocusEffect, useRouter } from "expo-router";
 import { ChevronRight, Edit3, Lock, LogOut, Mail, Phone, Shield, User } from "lucide-react-native";
 import { useCallback, useState } from "react";
-import { ActivityIndicator, Alert, ScrollView, View } from "react-native";
+import { ActivityIndicator, ScrollView, View } from "react-native";
 
 import { HStack } from "@/components/ui/hstack";
 import { Icon } from "@/components/ui/icon";
@@ -10,8 +10,9 @@ import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import { AlterarEmailModal } from "@/src/components/modals/AlterarEmailModal";
 import { AlterarSenhaModal } from "@/src/components/modals/AlterarSenhaModal";
+import { ExcluirContaModal } from "@/src/components/modals/ExcluirContaModal";
+import { useMotorista } from "@/src/hooks/useMotorista";
 import { useMotoristaProfileQuery } from "@/src/queries/motorista.queries";
-import { AuthService } from "@/src/services/AuthService";
 import { PRIMARY_500 } from "@/src/constants/colors";
 import { useAuthStore } from "@/src/stores/useAuthStore";
 
@@ -78,31 +79,15 @@ export default function Perfil() {
     router.replace("/(auth)/login");
   };
 
-  const [excluindo, setExcluindo] = useState(false);
+  const { excluirConta, isExcluindo } = useMotorista();
+  const [excluirContaOpen, setExcluirContaOpen] = useState(false);
 
-  const excluirConta = async () => {
-    setExcluindo(true);
+  const handleExcluirConta = async () => {
     try {
-      await AuthService.delete();
-      await signOut();
+      await excluirConta();
+      setExcluirContaOpen(false);
       router.replace("/(auth)/login");
-      Alert.alert("Conta excluída", "Seus dados pessoais foram removidos do TruckFlow.");
-    } catch {
-      Alert.alert("Não foi possível excluir", "Verifique sua conexão e tente novamente.");
-    } finally {
-      setExcluindo(false);
-    }
-  };
-
-  const confirmarExclusao = () => {
-    Alert.alert(
-      "Excluir minha conta",
-      "Seu nome, telefone, e-mail e veículos serão apagados e você não poderá mais entrar com esta conta. Agendamentos e notas fiscais já registrados ficam com a fábrica por obrigação legal. Essa ação não pode ser desfeita.",
-      [
-        { text: "Cancelar", style: "cancel" },
-        { text: "Excluir", style: "destructive", onPress: excluirConta },
-      ],
-    );
+    } catch { }
   };
 
   return (
@@ -195,18 +180,20 @@ export default function Perfil() {
             </View>
           </Pressable>
 
-          <Pressable onPress={confirmarExclusao} disabled={excluindo} className="items-center py-2">
-            {excluindo ? (
-              <ActivityIndicator size="small" color="#ef4444" />
-            ) : (
-              <Text className="text-gray-400 text-sm underline">Excluir minha conta</Text>
-            )}
+          <Pressable onPress={() => setExcluirContaOpen(true)} className="items-center py-2">
+            <Text className="text-gray-400 text-sm underline">Excluir minha conta</Text>
           </Pressable>
         </VStack>
       </ScrollView>
 
       <AlterarSenhaModal visible={alterarSenhaOpen} onClose={() => setAlterarSenhaOpen(false)} />
       <AlterarEmailModal visible={alterarEmailOpen} onClose={() => setAlterarEmailOpen(false)} />
+      <ExcluirContaModal
+        visible={excluirContaOpen}
+        loading={isExcluindo}
+        onClose={() => setExcluirContaOpen(false)}
+        onConfirm={handleExcluirConta}
+      />
     </>
   );
 }

@@ -72,7 +72,9 @@ Alias `@` = raiz do repo (`@/src/...`, `@/components/ui/...`).
 EXPO_PUBLIC_API_URL=http://192.168.18.6:8080/v1/
 ```
 
-Vars `EXPO_PUBLIC_*` são automaticamente expostas (sem babel plugin). Apenas URL pública — nunca segredos. `eas.json` ainda não define env por profile.
+Vars `EXPO_PUBLIC_*` são automaticamente expostas (sem babel plugin). Apenas URL pública — nunca segredos. Outras: `EXPO_PUBLIC_SENTRY_DSN` (vazio = Sentry desligado) e `EXPO_PUBLIC_APP_ENV`.
+
+Builds na nuvem: `.env` e `google-services.json` não vão pro EAS (git-ignored). Cada profile do `eas.json` aponta um `environment` do EAS (`development`/`preview`/`production`) com `EXPO_PUBLIC_API_URL`, `EXPO_PUBLIC_SENTRY_DSN` e o arquivo `GOOGLE_SERVICES_JSON` (lido no `app.config.js`, que sobrepõe o `app.json`). OTA via `expo-updates` (canal = nome do profile, `runtimeVersion` por `appVersion`); versão mínima obrigatória vem de `GET /v1/app/versao-minima` (config `AppMobile` da API). Passo a passo de publicação: TRUCK-312.
 
 ## Backend
 
@@ -86,9 +88,9 @@ Decisão por ADR-0003 do backend + `docs/adr/0002-captura-localizacao.md` deste 
 
 - `expo-secure-store` para qualquer dado sensível (tokens, credenciais).
 - `AsyncStorage` apenas para preferências/cache não-sensível.
-- TanStack Query igual ao web: `services/` (HTTP puro) → `queries/` (useQuery + queryKey) → `hooks/` (useMutation + invalidação + toast) → telas. Telas não chamam service direto.
+- **Mesma estrutura do front-web, obrigatória em código novo:** `Dtos/` (equivale ao `entities/*.types.ts` do web) → `services/` (HTTP puro) → `queries/` (useQuery + queryKey) → `hooks/` (useMutation + invalidação + toast) → telas/componentes. Tela, componente e modal **nunca** chamam `XService` direto (dívida existente a migrar: `login.tsx`, `register.tsx`, `editar-perfil.tsx`, `AlterarSenhaModal`, `AlterarEmailModal`).
 - Zustand sempre com seletor (`useAuthStore(s => s.token)`); dado de servidor fica no React Query.
-- Toast imperativo: `toast.success/error(titulo, descricao?)` de `src/components/feedback/toast.tsx`.
+- Feedback ao usuário: **sempre** o toast do projeto, `toast.success/error(titulo, descricao?)` de `src/components/feedback/toast.tsx`, disparado no `onSuccess/onError` do hook. **Nunca** `Alert.alert` do React Native. Confirmação (ação destrutiva) = modal em `src/components/modals/` no padrão bottom-sheet dos existentes (ex.: `ExcluirContaModal`).
 - Componentes funcionais + hooks.
 - Agentes e skills do projeto ficam no repo da API: `C:\ESTUDO\TruckFlow\.claude\` (`mobile-expo-specialist`, `typescript-pro`...). Para valerem aqui, rodar uma vez `.claude\setup-agents.ps1` do repo da API (junções em `~/.claude`).
 
