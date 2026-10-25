@@ -14,15 +14,6 @@ export default class NotaFiscalService {
             } as any
         );
 
-        console.log({
-            uri: fileUri,
-            isFile: fileUri.startsWith("file://"),
-        });
-
-        for (const pair of (formData as any)._parts) {
-            console.log(pair);
-        }
-
         const { data } = await http.post("/NotaFiscal/parse", formData, {
             timeout: 30000,
             headers: { "Content-Type": "multipart/form-data" },

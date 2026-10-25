@@ -54,7 +54,7 @@ export default function Login() {
 
       router.replace("/(app)/home");
     } catch (error: any) {
-      console.error(error);
+      console.error("Erro login:", error?.response?.status ?? error?.message);
       const mensagem =
         error.response?.data?.message || "Usuário ou senha incorretos.";
       toast.error("Erro no login", mensagem);

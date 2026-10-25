@@ -82,7 +82,7 @@ export default function Register() {
       toast.success("Conta criada!", "Faça login para continuar.");
       router.replace("/(auth)/login");
     } catch (error: any) {
-      console.error(error);
+      console.error("Erro cadastro:", error?.response?.status ?? error?.message);
       toast.error(
         "Erro ao criar conta",
         "Verifique os dados e tente novamente.",

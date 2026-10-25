@@ -14,8 +14,8 @@ export const useNotaFiscal = () => {
         onSuccess: (data) => {
             setNotaStore(data);
         },
-        onError: (error) => {
-            console.error("Erro upload:", error);
+        onError: (error: any) => {
+            console.error("Erro upload:", error?.response?.status ?? error?.message);
             toast.error(
                 "Falha ao ler a nota",
                 "Verifique se o XML é válido e tente novamente.",
@@ -57,7 +57,6 @@ export const useNotaFiscal = () => {
             }
         },
         onSuccess: (data) => {
-            console.log("RETORNO DO SAVE >>>", JSON.stringify(data, null, 2));
             setNotaStore(data);
             toast.success("Nota encontrada", "Seguindo para a conferência.");
         },
@@ -81,7 +80,7 @@ export const useNotaFiscal = () => {
                     "Falha ao buscar nota",
                     "Verifique sua conexão e tente novamente.",
                 );
-                console.error("Erro busca:", error);
+                console.error("Erro busca:", error?.response?.status ?? error?.message);
             }
         }
     })

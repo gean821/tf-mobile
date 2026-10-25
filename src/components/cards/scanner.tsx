@@ -34,8 +34,6 @@ export default function Scanner({ onScanned, onClose }: Props) {
       return;
     }
 
-    console.log(`[SCANNER] Tipo: ${type} | Dados brutos: ${data}`);
-
     const chaveLimpa = data.replace(/[^0-9]/g, '');
     console.log(`[SCANNER] Tamanho limpo: ${chaveLimpa.length}`);
 
