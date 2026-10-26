@@ -34,7 +34,12 @@
     },
     "plugins": [
       "expo-router",
-      "expo-secure-store",
+      [
+        "expo-secure-store",
+        {
+          "faceIDPermission": "O TruckFlow Motorista usa o Face ID para você entrar sem digitar a senha."
+        }
+      ],
       [
         "@sentry/react-native/expo",
         {

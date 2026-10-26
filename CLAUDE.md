@@ -88,7 +88,10 @@ Decisão por ADR-0003 do backend + `docs/adr/0002-captura-localizacao.md` deste 
 
 - `expo-secure-store` para qualquer dado sensível (tokens, credenciais).
 - `AsyncStorage` apenas para preferências/cache não-sensível.
-- **Mesma estrutura do front-web, obrigatória em código novo:** `Dtos/` (equivale ao `entities/*.types.ts` do web) → `services/` (HTTP puro) → `queries/` (useQuery + queryKey) → `hooks/` (useMutation + invalidação + toast) → telas/componentes. Tela, componente e modal **nunca** chamam `XService` direto (dívida existente a migrar: `login.tsx`, `register.tsx`, `editar-perfil.tsx`, `AlterarSenhaModal`, `AlterarEmailModal`).
+- **Mesma estrutura do front-web, obrigatória em código novo:** `Dtos/` (equivale ao `entities/*.types.ts` do web) → `services/` (HTTP puro) → `queries/` (useQuery + queryKey) → `hooks/` (useMutation + invalidação + toast) → telas/componentes. Tela, componente e modal **nunca** chamam `XService` direto (dívida existente a migrar: `AlterarSenhaModal`, `AlterarEmailModal`). Login/cadastro usam `useAuth`; perfil usa `useMotorista`.
+- Erro de API ao usuário: sempre a mensagem do backend (`error?.response?.data?.message`, mensagens juntadas com " | " viram uma por linha) com fallback curto, nunca texto genérico fixo.
+- Telefone: input com `formatarTelefone` (`src/utils/telefone.ts`) e envio só com dígitos (`somenteDigitos`); a API normaliza e exige DDD + número.
+- "Lembrar-me": `LembrarLoginService` guarda o usuário no SecureStore e a senha só com `requireAuthentication` (digital/Face ID); sem biometria no aparelho, guarda só o usuário. Excluir conta limpa tudo.
 - Zustand sempre com seletor (`useAuthStore(s => s.token)`); dado de servidor fica no React Query.
 - Feedback ao usuário: **sempre** o toast do projeto, `toast.success/error(titulo, descricao?)` de `src/components/feedback/toast.tsx`, disparado no `onSuccess/onError` do hook. **Nunca** `Alert.alert` do React Native. Confirmação (ação destrutiva) = modal em `src/components/modals/` no padrão bottom-sheet dos existentes (ex.: `ExcluirContaModal`).
 - Componentes funcionais + hooks.

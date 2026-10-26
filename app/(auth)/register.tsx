@@ -5,7 +5,8 @@ import { Input, InputField, InputIcon, InputSlot } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import { toast } from "@/src/components/feedback/toast";
-import { AuthService } from "@/src/services/AuthService";
+import { useAuth } from "@/src/hooks/useAuth";
+import { formatarTelefone, somenteDigitos } from "@/src/utils/telefone";
 import { router } from "expo-router";
 import {
     EyeIcon,
@@ -39,7 +40,7 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [telephone, setTelephone] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const { register, isRegistering } = useAuth();
   const [touched, setTouched] = useState<
     Partial<Record<CampoObrigatorio, boolean>>
   >({});
@@ -69,27 +70,17 @@ export default function Register() {
       return;
     }
 
-    setIsLoading(true);
     try {
-      await AuthService.register({
-        username: username,
-        email: email,
-        nomeReal: nomeReal,
+      await register({
+        username: username.trim(),
+        email: email.trim(),
+        nomeReal: nomeReal.trim(),
         password: password,
-        telefone: telephone,
+        telefone: somenteDigitos(telephone),
       });
 
-      toast.success("Conta criada!", "Faça login para continuar.");
       router.replace("/(auth)/login");
-    } catch (error: any) {
-      console.error("Erro cadastro:", error?.response?.status ?? error?.message);
-      toast.error(
-        "Erro ao criar conta",
-        "Verifique os dados e tente novamente.",
-      );
-    } finally {
-      setIsLoading(false);
-    }
+    } catch { }
   };
 
   return (
@@ -217,9 +208,10 @@ export default function Register() {
                   <InputField
                     placeholder="(00) 90000-0000"
                     value={telephone}
-                    onChangeText={setTelephone}
+                    onChangeText={(valor) => setTelephone(formatarTelefone(valor))}
                     onBlur={() => markTouched("telephone")}
                     keyboardType="phone-pad"
+                    maxLength={15}
                   />
                 </Input>
                 {temErro("telephone", telephone) && (
@@ -270,9 +262,9 @@ export default function Register() {
                   size="xl"
                   className="bg-primary-500 rounded-xl h-14 shadow-md shadow-blue-200"
                   onPress={handleRegister}
-                  isDisabled={isLoading}
+                  isDisabled={isRegistering}
                 >
-                  {isLoading ? (
+                  {isRegistering ? (
                     <ButtonSpinner color="#fff" />
                   ) : (
                     <ButtonText className="font-bold text-white">
@@ -284,7 +276,7 @@ export default function Register() {
                 <Button
                   variant="link"
                   onPress={() => router.back()}
-                  isDisabled={isLoading}
+                  isDisabled={isRegistering}
                 >
                   <ButtonText className="text-gray-500 font-medium">
                     Já tenho uma conta. Fazer Login

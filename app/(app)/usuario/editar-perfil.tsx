@@ -1,11 +1,5 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import {
-  ArrowLeft,
-  Phone,
-  User,
-  UserCircle,
-} from "lucide-react-native";
+import { ArrowLeft, Phone, User, UserCircle } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
 
@@ -19,44 +13,36 @@ import { Pressable } from "@/components/ui/pressable";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 
-import { toast } from "@/src/components/feedback/toast";
-import { motoristaQueryKey, useMotoristaProfileQuery } from "@/src/queries/motorista.queries";
-import { AuthService } from "@/src/services/AuthService";
+import { useMotorista } from "@/src/hooks/useMotorista";
+import { useMotoristaProfileQuery } from "@/src/queries/motorista.queries";
+import { formatarTelefone, somenteDigitos } from "@/src/utils/telefone";
 
 export default function EditarPerfil() {
   const router = useRouter();
-  const queryClient = useQueryClient();
   const { data: profile } = useMotoristaProfileQuery();
+  const { atualizarPerfil, isAtualizando: isLoading } = useMotorista();
 
   const [nomeReal, setNomeReal] = useState("");
   const [username, setUsername] = useState("");
   const [telefone, setTelefone] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!profile) return;
     setNomeReal(profile.nomeReal ?? "");
     setUsername(profile.username ?? "");
-    setTelefone(profile.telefone ?? "");
+    setTelefone(formatarTelefone(profile.telefone ?? ""));
   }, [profile]);
 
   const handleSave = async () => {
-    setIsLoading(true);
+    const digitos = somenteDigitos(telefone);
     try {
-      await AuthService.update({
+      await atualizarPerfil({
         ...(nomeReal && { nomeReal }),
         ...(username && { username }),
-        ...(telefone && { telefone }),
+        ...(digitos && { telefone: digitos }),
       });
-
-      await queryClient.invalidateQueries({ queryKey: [motoristaQueryKey] });
-      toast.success("Perfil atualizado!", "Suas informações foram salvas.");
       router.back();
-    } catch {
-      toast.error("Erro ao atualizar", "Verifique os dados e tente novamente.");
-    } finally {
-      setIsLoading(false);
-    }
+    } catch {}
   };
 
   return (
@@ -78,7 +64,9 @@ export default function EditarPerfil() {
           >
             <Icon as={ArrowLeft} color="white" size="md" />
           </Pressable>
-          <Text className="text-white text-lg font-semibold">Editar Perfil</Text>
+          <Text className="text-white text-lg font-semibold">
+            Editar Perfil
+          </Text>
         </HStack>
 
         <Heading size="xl" className="text-white font-bold">
@@ -153,8 +141,9 @@ export default function EditarPerfil() {
                 <InputField
                   placeholder="(00) 90000-0000"
                   value={telefone}
-                  onChangeText={setTelefone}
+                  onChangeText={(valor) => setTelefone(formatarTelefone(valor))}
                   keyboardType="phone-pad"
+                  maxLength={15}
                 />
               </Input>
             </VStack>

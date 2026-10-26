@@ -26,3 +26,7 @@ yarn-error.log
 google-services.json
 *-firebase-adminsdk-*.json
 
+# Chaves de assinatura do app
+*.jks
+*.keystore
+
