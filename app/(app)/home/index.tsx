@@ -16,6 +16,7 @@ import { Pressable } from "@/components/ui/pressable";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import { ActionCard } from "@/src/components/cards/ActionCard";
+import { ResumoMesCard } from "@/src/components/cards/ResumoMesCard";
 import { PRIMARY_500 } from "@/src/constants/colors";
 import { useAuthStore } from "@/src/stores/useAuthStore";
 
@@ -139,6 +140,8 @@ export default function Home() {
             </HStack>
           </View>
         </Pressable>
+
+        <ResumoMesCard onPress={() => router.push("/relatorio/meu-desempenho")} />
 
         <VStack space="md">
           <HStack className="justify-between items-end px-1">

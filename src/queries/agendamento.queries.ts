@@ -1,4 +1,5 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { RelatorioMotoristaQueryDto } from "../Dtos/Motorista/relatorioMotoristaDto";
 import AgendamentoService from "../services/AgendamentoService";
 
 export const agendamentoQueryKey = "agendamentos";
@@ -16,6 +17,16 @@ export function useVagasDisponiveisQuery(
         refetchInterval: 15_000,
         refetchOnWindowFocus: true,
         staleTime: 0,
+    });
+}
+
+export function useRelatorioMotoristaQuery(params: RelatorioMotoristaQueryDto) {
+    return useQuery({
+        queryKey: [agendamentoQueryKey, "relatorio", params],
+        queryFn: async () => await AgendamentoService.getRelatorio(params),
+        placeholderData: keepPreviousData,
+        staleTime: 60_000,
+        refetchOnWindowFocus: true,
     });
 }
 

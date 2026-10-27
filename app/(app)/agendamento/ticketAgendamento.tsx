@@ -36,13 +36,17 @@ export default function TicketAgendamento() {
 
   const [avisarModalOpen, setAvisarModalOpen] = useState(false);
 
-  const { data: meusAgendamentos = [], isLoading } = useMeusAgendamentosQuery();
+  const {
+    data: meusAgendamentos = [],
+    isLoading,
+    isFetching,
+  } = useMeusAgendamentosQuery();
 
   const agendamentoSelecionado = meusAgendamentos.find(
     (a) => a.id === agendamentoId,
   );
 
-  if (isLoading) {
+  if (isLoading || (!agendamentoSelecionado && isFetching)) {
     return (
       <Center className="flex-1 bg-primary-500">
         <ActivityIndicator size="large" color="#fff" />

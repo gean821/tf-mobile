@@ -40,7 +40,6 @@ export function usePushRegistration() {
     try {
       PushRegistrationService.ensureRegistered();
     } catch {
-      // Expo Go: ignora
     }
   }, [token]);
 

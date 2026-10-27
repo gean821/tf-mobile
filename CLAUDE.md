@@ -12,6 +12,7 @@ App mobile do motorista. Cliente-alvo: **Aurora Alimentos**.
 - **expo-secure-store 15** (storage seguro de tokens — Keychain/Keystore)
 - **expo-notifications** + expo-device (push Expo), **expo-camera** (scanner do DANFe), expo-document-picker (XML NF-e)
 - **NativeWind 4** + **gluestack-ui v3** (`@/components/ui/*`), ícones lucide-react-native
+- **Gráficos: Apache ECharts** (mesma lib decidida para o admin na TRUCK-303/304) via `@wuba/react-native-echarts/svgChart` — sempre pelo wrapper `src/components/graficos/EChart.tsx` e cores de `graficos/tema.ts`. Importar só o subcaminho `svgChart` (o `index` puxa Skia, que não está instalado). Renderiza com `react-native-svg`: sem módulo nativo novo, sai por OTA. Gráfico pro motorista = leitura imediata: sem eixo Y, número em cima da barra, total no centro da rosca, legenda em texto grande.
 - AsyncStorage instalado mas **não usado** — não usar para tokens
 - Ainda sem testes, sem ESLint; sem expo-location/expo-sqlite (tracking não implementado)
 

@@ -1,10 +1,9 @@
 import { Icon } from "@/components/ui/icon";
-import { Pressable } from "@/components/ui/pressable";
 import { PRIMARY_500 } from "@/src/constants/colors";
 import { useNotificacoesUnreadCountQuery } from "@/src/queries/notificacao.queries";
 import { useRouter } from "expo-router";
 import { Bell, User } from "lucide-react-native";
-import { Image, StatusBar, Text, View } from "react-native";
+import { Image, Pressable, StatusBar, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const Navbar = () => {
@@ -65,12 +64,13 @@ export const Navbar = () => {
             onPress={() => router.push("/notificacoes/notificacao")}
             accessibilityLabel="Notificações"
             accessibilityRole="button"
+            hitSlop={8}
+            android_ripple={{ color: "rgba(255,255,255,0.25)", borderless: true, radius: 22 }}
             style={({ pressed }) => ({
               borderRadius: 999,
               padding: 9,
-              backgroundColor: pressed
-                ? "rgba(255,255,255,0.18)"
-                : "transparent",
+              backgroundColor: pressed ? "rgba(255,255,255,0.28)" : "transparent",
+              transform: [{ scale: pressed ? 0.9 : 1 }],
             })}
           >
             <View>
@@ -120,12 +120,15 @@ export const Navbar = () => {
           {/* Perfil */}
           <Pressable
             onPress={() => router.push("/(app)/usuario/perfl")}
+            accessibilityLabel="Meu perfil"
+            accessibilityRole="button"
+            hitSlop={8}
+            android_ripple={{ color: "rgba(255,255,255,0.25)", borderless: true, radius: 22 }}
             style={({ pressed }) => ({
               borderRadius: 999,
               padding: 9,
-              backgroundColor: pressed
-                ? "rgba(255,255,255,0.18)"
-                : "transparent",
+              backgroundColor: pressed ? "rgba(255,255,255,0.28)" : "transparent",
+              transform: [{ scale: pressed ? 0.9 : 1 }],
             })}
           >
             <Icon as={User} color="white" size="md" />

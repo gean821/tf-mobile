@@ -13,6 +13,7 @@ const HIDE_NAVBAR_ROUTES = new Set([
   "agendamento/ticketAgendamento",
   "agendamento/scanner",
   "notificacoes/notificacao",
+  "relatorio/meu-desempenho",
   "usuario/editar-perfil",
 ]);
 
