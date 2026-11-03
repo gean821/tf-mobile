@@ -58,6 +58,11 @@ function InitialLayout() {
     loadSession();
   }, []);
 
+  // preventAutoHideAsync lá em cima deixa a splash por nossa conta: o expo-router não a esconde sozinho
+  useEffect(() => {
+    if (!isLoading) SplashScreen.hideAsync();
+  }, [isLoading]);
+
   useEffect(() => {
     if (isLoading || atualizacaoObrigatoria) return;
 
