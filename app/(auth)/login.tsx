@@ -29,8 +29,10 @@ import {
 } from "lucide-react-native";
 
 import MotoristaLoginDto from "@/src/Dtos/Motorista/motoristaLoginDto";
+import { IDLE_TIMEOUT_MS } from "@/src/constants/session";
 import { useAuth } from "@/src/hooks/useAuth";
 import LembrarLoginService from "@/src/services/LembrarLoginService";
+import { useAuthStore } from "@/src/stores/useAuthStore";
 
 export default function Login() {
   const [form, setForm] = useState<MotoristaLoginDto>({
@@ -43,6 +45,8 @@ export default function Login() {
   const [loginSalvo, setLoginSalvo] = useState<string | null>(null);
   const [temBiometria, setTemBiometria] = useState(false);
   const biometriaTentada = useRef(false);
+  // lido uma vez no mount: o efeito do toast limpa o motivo antes do efeito da biometria rodar
+  const saiuPorInatividade = useRef(useAuthStore.getState().motivoLogout === "inatividade");
 
   const { login, isLoggingIn } = useAuth();
 
@@ -68,6 +72,15 @@ export default function Login() {
   };
 
   useEffect(() => {
+    if (!saiuPorInatividade.current) return;
+    toast.info(
+      "Sessão encerrada",
+      `Você foi desconectado após ${IDLE_TIMEOUT_MS / 60_000} minutos sem uso.`,
+    );
+    useAuthStore.getState().limparMotivoLogout();
+  }, []);
+
+  useEffect(() => {
     (async () => {
       const usuario = await LembrarLoginService.obterLogin();
       if (!usuario) {
@@ -81,7 +94,7 @@ export default function Login() {
       const biometria = await LembrarLoginService.temSenhaSalva();
       setTemBiometria(biometria);
 
-      if (biometria && !biometriaTentada.current) {
+      if (biometria && !biometriaTentada.current && !saiuPorInatividade.current) {
         biometriaTentada.current = true;
         entrarComBiometria(usuario);
       }
