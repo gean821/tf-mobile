@@ -1,9 +1,11 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
 import { create } from "zustand";
 import RefreshMobileResponseDto from "../Dtos/auth/RefreshMobileResponseDto";
 import JwtPayload from "../Entities/JwtPayload";
+import { IDLE_TIMEOUT_MS, LAST_ACTIVITY_KEY } from "../constants/session";
 
 export const REFRESH_TOKEN_KEY = "tf_refresh";
 export const ACCESS_TOKEN_KEY = "tf_access";
@@ -28,9 +30,11 @@ interface AuthState {
   tokenExpiresAt: string | null;
   user: JwtPayload | null;
   isLoading: boolean;
+  motivoLogout: string | null;
 
   signIn: (token: string, refreshToken: string, tokenExpiresAt: string) => Promise<void>;
-  signOut: () => Promise<void>;
+  signOut: (motivo?: string) => Promise<void>;
+  limparMotivoLogout: () => void;
   loadSession: () => Promise<void>;
 
   setAccess: (token: string, tokenExpiresAt: string) => void;
@@ -43,10 +47,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   tokenExpiresAt: null,
   user: null,
   isLoading: true,
+  motivoLogout: null,
 
   signIn: async (token, refreshToken, tokenExpiresAt) => {
     try {
       const decoded = jwtDecode<JwtPayload>(token);
+      await AsyncStorage.setItem(LAST_ACTIVITY_KEY, String(Date.now()));
 
       if (refreshToken) {
         await SecureStore.setItemAsync(
@@ -62,6 +68,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         refreshToken: refreshToken ?? null,
         tokenExpiresAt,
         user: decoded,
+        motivoLogout: null,
       });
     } catch (error) {
       console.error("Erro ao salvar sessão", error);
@@ -83,7 +90,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ refreshToken });
   },
 
-  signOut: async () => {
+  signOut: async (motivo) => {
     const refresh =
       get().refreshToken ?? (await SecureStore.getItemAsync(REFRESH_TOKEN_KEY));
 
@@ -96,8 +103,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
     await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY);
-    set({ token: null, refreshToken: null, tokenExpiresAt: null, user: null });
+    await AsyncStorage.removeItem(LAST_ACTIVITY_KEY);
+    set({ token: null, refreshToken: null, tokenExpiresAt: null, user: null, motivoLogout: motivo ?? null });
   },
+
+  limparMotivoLogout: () => set({ motivoLogout: null }),
 
   loadSession: async () => {
     set({ isLoading: true });
@@ -105,6 +115,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const refresh = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
       if (!refresh) {
         set({ token: null, refreshToken: null, tokenExpiresAt: null, user: null });
+        return;
+      }
+
+      const ultimaAtividade = Number(await AsyncStorage.getItem(LAST_ACTIVITY_KEY));
+      if (ultimaAtividade && Date.now() - ultimaAtividade > IDLE_TIMEOUT_MS) {
+        await get().signOut("inatividade");
         return;
       }
 
@@ -127,6 +143,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           tokenExpiresAt: data.tokenExpiresAt,
           user: decoded,
         });
+        await AsyncStorage.setItem(LAST_ACTIVITY_KEY, String(Date.now()));
       } catch (error) {
         if (isSessaoRecusada(error)) {
           await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);

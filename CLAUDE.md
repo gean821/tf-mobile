@@ -13,7 +13,7 @@ App mobile do motorista. Cliente-alvo: **Aurora Alimentos**.
 - **expo-notifications** + expo-device (push Expo), **expo-camera** (scanner do DANFe), expo-document-picker (XML NF-e)
 - **NativeWind 4** + **gluestack-ui v3** (`@/components/ui/*`), ícones lucide-react-native
 - **Gráficos: Apache ECharts** (mesma lib decidida para o admin na TRUCK-303/304) via `@wuba/react-native-echarts/svgChart` — sempre pelo wrapper `src/components/graficos/EChart.tsx` e cores de `graficos/tema.ts`. Importar só o subcaminho `svgChart` (o `index` puxa Skia, que não está instalado). Renderiza com `react-native-svg`: sem módulo nativo novo, sai por OTA. Gráfico pro motorista = leitura imediata: sem eixo Y, número em cima da barra, total no centro da rosca, legenda em texto grande.
-- AsyncStorage instalado mas **não usado** — não usar para tokens
+- AsyncStorage: só para dado não-sensível (hoje, o `tf_last_activity` do logout por inatividade) — nunca tokens
 - Ainda sem testes, sem ESLint; sem expo-location/expo-sqlite (tracking não implementado)
 
 ## Navegação (expo-router)
@@ -52,7 +52,8 @@ Alias `@` = raiz do repo (`@/src/...`, `@/components/ui/...`).
 - Store: `src/stores/useAuthStore.ts` — `signIn`, `signOut`, `loadSession`, `setAccess`, `setRefresh`
 - Bootstrap: `app/_layout.tsx` chama `loadSession()` no app start, que lê `tf_refresh` e faz `POST /Auth/refresh-mobile` (rotação); mantém a tela de loading até `isLoading=false`
 - Interceptor: `src/services/http/axios.ts` anexa `Authorization: Bearer`; no 401 faz **refresh single-flight** (`/Auth/refresh-mobile`) e repete a request; se falhar, `signOut()` + `router.replace('/(auth)/login')`
-- Logout: `signOut()` → `POST /Auth/logout-mobile` + apaga `tf_refresh`
+- Logout: `signOut(motivo?)` → `POST /Auth/logout-mobile` + apaga `tf_refresh`/`tf_access`/`tf_last_activity`; o motivo fica em `motivoLogout` no store (não em query param — o guard do root layout ganharia a corrida) e o login lê/limpa com `limparMotivoLogout()`
+- Inatividade (SAD 30): `src/hooks/useIdleLogout.ts`, montado em `app/(app)/_layout.tsx` (toques capturados via `onStartShouldSetResponderCapture` no `SafeAreaView`). Após `EXPO_PUBLIC_IDLE_TIMEOUT_MIN` (padrão 60, `src/constants/session.ts`) sem toque, aviso 60s antes (`IdleWarningModal`) e `signOut('inatividade')`. **Tempo em background conta**: no `AppState` `active` recalcula pelo relógio; último toque em AsyncStorage `tf_last_activity` (throttle 5s, gravado também ao ir pro background e no `signIn`) e checado no `loadSession` antes do refresh (app morto e reaberto). Após logout por inatividade o login mostra toast e **não** dispara a biometria automática. Só client-side (backend não valida inatividade)
 
 ## Push
 
@@ -73,7 +74,7 @@ Alias `@` = raiz do repo (`@/src/...`, `@/components/ui/...`).
 EXPO_PUBLIC_API_URL=http://192.168.18.6:8080/v1/
 ```
 
-Vars `EXPO_PUBLIC_*` são automaticamente expostas (sem babel plugin). Apenas URL pública — nunca segredos. Outras: `EXPO_PUBLIC_SENTRY_DSN` (vazio = Sentry desligado) e `EXPO_PUBLIC_APP_ENV`.
+Vars `EXPO_PUBLIC_*` são automaticamente expostas (sem babel plugin). Apenas URL pública — nunca segredos. Outras: `EXPO_PUBLIC_SENTRY_DSN` (vazio = Sentry desligado), `EXPO_PUBLIC_APP_ENV` e `EXPO_PUBLIC_IDLE_TIMEOUT_MIN` (opcional, padrão 60; o valor é embutido no bundle — após mudar, `npm run start:clear`).
 
 Builds na nuvem: `.env` e `google-services.json` não vão pro EAS (git-ignored). Cada profile do `eas.json` aponta um `environment` do EAS (`development`/`preview`/`production`) com `EXPO_PUBLIC_API_URL`, `EXPO_PUBLIC_SENTRY_DSN` e o arquivo `GOOGLE_SERVICES_JSON` (lido no `app.config.js`, que sobrepõe o `app.json`). OTA via `expo-updates` (canal = nome do profile, `runtimeVersion` por `appVersion`); versão mínima obrigatória vem de `GET /v1/app/versao-minima` (config `AppMobile` da API). Passo a passo de publicação: TRUCK-312.
 

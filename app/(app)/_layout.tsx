@@ -1,4 +1,6 @@
+import { IdleWarningModal } from "@/src/components/modals/IdleWarningModal";
 import { Navbar } from "@/src/components/navs/navbar";
+import { useIdleLogout } from "@/src/hooks/useIdleLogout";
 import { Stack, useSegments } from "expo-router";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
@@ -23,16 +25,30 @@ export default function AppLayout() {
     .filter((segment) => !(segment.startsWith("(") && segment.endsWith(")")))
     .join("/");
   const showNavbar = !HIDE_NAVBAR_ROUTES.has(routeKey);
+  const { avisoVisivel, segundosRestantes, registrarAtividade, continuar, sair } = useIdleLogout();
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView
+        style={{ flex: 1 }}
+        onStartShouldSetResponderCapture={() => {
+          registrarAtividade();
+          return false; // só observa o toque, não rouba o responder
+        }}
+      >
         {showNavbar && <Navbar />}
 
         <Stack
           screenOptions={{
             headerShown: false,
           }}
+        />
+
+        <IdleWarningModal
+          visible={avisoVisivel}
+          segundos={segundosRestantes}
+          onContinuar={continuar}
+          onSair={sair}
         />
       </SafeAreaView>
     </SafeAreaProvider>
